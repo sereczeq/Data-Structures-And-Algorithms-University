@@ -14,6 +14,7 @@ public class Main
 	{
 		
 		Scanner fileScanner = scan;
+		
 		// deleted lines would work if we were to read an actual file
 		
 		// Scanner fileScanner = new Scanner(new File(name));
@@ -73,7 +74,7 @@ public class Main
 	private static void drawChristmassTree(int n)
 	{
 		
-		for (int x = 0; x < n; x++)
+		for (int x = 0; x <= n; x++)
 		{
 			for (int y = 0, howMany = 1; y < x; y++, howMany += 2)
 			{
