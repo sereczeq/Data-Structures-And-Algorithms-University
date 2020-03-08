@@ -71,6 +71,50 @@ public class Main
 	}
 	
 	
+	private static void drawZ(int n)
+	{
+		
+		drawLine(n, 'X');
+		System.out.println("");
+		for (int x = n - 2; x > 0; x--)
+		{
+			drawLine(x, ' ');
+			System.out.println("X");
+		}
+		drawLine(n, 'X');
+		
+	}
+	
+	
+	private static void drawZigzag(int n)
+	{
+		
+		// draws top of zet
+		for (int x = 0; x < n; x++)
+		{
+			System.out.print("X");
+		}
+		// it's equivalent of pressing enter, makes another line
+		System.out.print("\n");
+		// this draws the middle of the zet
+		for (int x = n - 2; x > 0; x--)
+		{
+			for (int y = 0; y < n; y++)
+			{
+				// this prints the exact amount of spaces needed
+				System.out.print(" ");
+			}
+			System.out.println("X");
+		}
+		// draws bottom of zet
+		for (int x = 0; x < n; x++)
+		{
+			System.out.print("X");
+		}
+		
+	}
+	
+	
 	private static void drawChristmassTree(int n)
 	{
 		
@@ -126,6 +170,13 @@ public class Main
 			if (word[0].equalsIgnoreCase("ld") && word.length == 2)
 			{
 				loadDocument(word[1]);
+				continue;
+			}
+			
+			// draw Z
+			if (word[0].equalsIgnoreCase("dz") && word.length == 2)
+			{
+				drawZ(Integer.parseInt(word[1]));
 				continue;
 			}
 			// ha
