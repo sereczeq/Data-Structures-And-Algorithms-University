@@ -54,11 +54,19 @@ class OneWayLinkedList<E> implements IList<E> // ready
 		E object;
 		Element next = null;
 		
+		@Override
+		public String toString()
+		{
+			
+			return object.toString();
+			
+		}
+		
 	}
 	
 	Element sentinel;
 	
-	private class InnerIterator implements Iterator<E> // ready
+	private class InnerIterator implements Iterator<E>
 	{
 		
 		Element elem;
@@ -88,7 +96,7 @@ class OneWayLinkedList<E> implements IList<E> // ready
 			if (hasNext())
 			{
 				elem = elem.next;
-				return (E) elem;
+				return (E) elem.object;
 			}
 			else throw new NullPointerException("InnerIterator.next");
 			
@@ -127,26 +135,40 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	public boolean add(E e)
 	{
 		
-		sentinel.next = new Element(e);
+		// Element elem = sentinel;
+		// for (int x = 0; true; x++)
+		// {
+		// if (elem.next == null)
+		// {
+		// elem.next = new Element(e);
+		// return true;
+		// }
+		// else elem = elem.next;
+		// }
+		
+		add(size(), e);
 		return true;
 		
 	}
 	
 	
 	@Override
-	public void add(int index, E element) throws NoSuchElementException
+	public void add(int index, E e) throws NoSuchElementException
 	{
 		
-		Iterator<E> it = this.iterator();
-		for (int x = 0; x < index; x++)
+		if (index > size()) throw new NoSuchElementException();
+		Element elem = sentinel;
+		for (int x = 0; true; x++)
 		{
-			if (it.hasNext()) it.next();
-			else throw new NoSuchElementException("add");
+			if (x == index)
+			{
+				Element temp = elem.next;
+				elem.next = new Element(e);
+				elem.next.next = temp;
+				return;
+			}
+			else elem = elem.next;
 		}
-		E temp = (E) sentinel;
-		sentinel.object = element;
-		sentinel.next = (OneWayLinkedList<E>.Element) temp;
-		// TODO: fix classes and casting
 		
 	}
 	
@@ -179,12 +201,14 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	public E get(int index) throws NoSuchElementException
 	{
 		
+		if (index >= size()) throw new NoSuchElementException("get");
+		
 		Iterator<E> it = this.iterator();
-		for (int x = 0; x < index && it.hasNext(); x++)
+		for (int x = 0; true; x++)
 		{
 			if (x == index) return it.next();
+			it.next();
 		}
-		throw new NoSuchElementException("get");
 		
 	}
 	
@@ -194,16 +218,9 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	{
 		
 		Iterator<E> it = this.iterator();
-		for (int x = 0; x < index && it.hasNext(); x++)
-		{
-			if (x == index)
-			{
-				E temp = sentinel.object;
-				sentinel.object = element;
-				return temp;
-			}
-		}
-		throw new NoSuchElementException("set");
+		E temp = remove(index);
+		add(index, element);
+		return temp;
 		
 	}
 	
@@ -215,10 +232,9 @@ class OneWayLinkedList<E> implements IList<E> // ready
 		Iterator<E> it = this.iterator();
 		for (int x = 0; it.hasNext(); x++)
 		{
-			if (it.next() == element) return x;
+			if (it.next().equals(element)) return x;
 		}
 		return -1;
-		// TODO: exception maybe?
 		
 	}
 	
@@ -236,7 +252,18 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	public E remove(int index) throws NoSuchElementException
 	{
 		
-		return set(index, null);
+		if (index >= size()) throw new NoSuchElementException();
+		Element elem = sentinel;
+		for (int x = 0; true; x++)
+		{
+			if (x == index)
+			{
+				E temp = elem.next.object;
+				elem.next = elem.next.next;
+				return temp;
+			}
+			elem = elem.next;
+		}
 		
 	}
 	
@@ -264,6 +291,22 @@ class OneWayLinkedList<E> implements IList<E> // ready
 		
 	}
 	
+	
+	@Override
+	public String toString()
+	{
+		
+		String s = "";
+		Iterator<E> it = this.iterator();
+		while (it.hasNext())
+		{
+			s += "\n" + it.next();
+			// if (it.hasNext()) s += "\n";
+		}
+		return s;
+		
+	}
+	
 }
 
 class Link // ready
@@ -275,6 +318,17 @@ class Link // ready
 	{
 		
 		this.ref = ref;
+		
+	}
+	
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		
+		if (other.getClass() != this.getClass()) return false;
+		Link temp = (Link) other;
+		return ref.contentEquals(temp.ref);
 		
 	}
 	
@@ -335,7 +389,7 @@ class Document // ready
 	public String toString()
 	{
 		
-		String s = "Document: " + name + " contains: \n";
+		String s = "Document: " + name;
 		s += links.toString();
 		return s;
 		
