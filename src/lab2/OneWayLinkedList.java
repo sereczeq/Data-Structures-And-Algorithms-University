@@ -88,7 +88,6 @@ class OneWayLinkedList<E> implements IList<E> // ready
 		}
 		
 		
-		// @SuppressWarnings("unchecked")
 		@Override
 		public E next() throws NullPointerException
 		{
@@ -107,7 +106,6 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	public OneWayLinkedList()
 	{
 		
-		// make a sentinel
 		sentinel = new Element(null);
 		
 	}
@@ -134,17 +132,6 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	@Override
 	public boolean add(E e)
 	{
-		
-		// Element elem = sentinel;
-		// for (int x = 0; true; x++)
-		// {
-		// if (elem.next == null)
-		// {
-		// elem.next = new Element(e);
-		// return true;
-		// }
-		// else elem = elem.next;
-		// }
 		
 		add(size(), e);
 		return true;
@@ -217,7 +204,6 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	public E set(int index, E element) throws NoSuchElementException
 	{
 		
-		Iterator<E> it = this.iterator();
 		E temp = remove(index);
 		add(index, element);
 		return temp;
@@ -253,6 +239,7 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	{
 		
 		if (index >= size()) throw new NoSuchElementException();
+		
 		Element elem = sentinel;
 		for (int x = 0; true; x++)
 		{
@@ -298,11 +285,7 @@ class OneWayLinkedList<E> implements IList<E> // ready
 		
 		String s = "";
 		Iterator<E> it = this.iterator();
-		while (it.hasNext())
-		{
-			s += "\n" + it.next();
-			// if (it.hasNext()) s += "\n";
-		}
+		while (it.hasNext()) s += "\n" + it.next();
 		return s;
 		
 	}
