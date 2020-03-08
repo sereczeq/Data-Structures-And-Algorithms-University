@@ -100,7 +100,8 @@ class OneWayLinkedList<E> implements IList<E> // ready
 	{
 		
 		// make a sentinel
-		// TODO
+		sentinel = new Element(null);
+		
 	}
 	
 	
@@ -293,7 +294,7 @@ class Document // ready
 {
 	
 	public String name;
-	public OneWayLinkedList<Link> links;
+	public OneWayLinkedList<Link> links = new OneWayLinkedList<Link>(); // changed stuff myself
 	// anything below added myself
 	final static Pattern regex = Pattern.compile("link=[a-z]\\w*");
 	
