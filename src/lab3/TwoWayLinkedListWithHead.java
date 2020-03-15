@@ -38,6 +38,7 @@ interface IList<E> extends Iterable<E>
 	
 }
 
+// There was no tail in source code so every mention of tail is added by me :D
 class TwoWayLinkedListWithHead<E> implements IList<E>
 {
 	
@@ -47,14 +48,18 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public Element(E e)
 		{
 			
-			// TODO
+			object = e;
+			
 		}
 		
 		
 		public Element(E e, Element next, Element prev)
 		{
 			
-			// TODO
+			object = e;
+			this.next = next;
+			this.prev = prev;
+			
 		}
 		
 		E object;
@@ -63,7 +68,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		
 	}
 	
-	Element head;
+	Element head = new Element(null);
+	Element tail = new Element(null);
 	// can be realization with the field size or without
 	int size;
 	
@@ -76,7 +82,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public InnerIterator()
 		{
 			
-			// TODO
+			pos = head;
+			
 		}
 		
 		
@@ -84,8 +91,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			// TODO
-			return false;
+			return pos.next != null;
 			
 		}
 		
@@ -94,8 +100,13 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public E next()
 		{
 			
-			// TODO
-			return null;
+			if (hasNext())
+			{
+				Element temp = pos.next;
+				pos = pos.next;
+				return temp.object;
+			}
+			else throw new NoSuchElementException();
 			
 		}
 		
@@ -104,7 +115,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	private class InnerListIterator implements ListIterator<E>
 	{
 		
-		Element p;
+		Element curr; // renamed "p" to "curr"
 		// TODO maybe more fields....
 		
 		@Override
@@ -120,8 +131,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			// TODO Auto-generated method stub
-			return false;
+			return curr.next != null;
 			
 		}
 		
@@ -130,8 +140,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasPrevious()
 		{
 			
-			// TODO Auto-generated method stub
-			return false;
+			return curr.prev != null;
 			
 		}
 		
@@ -140,8 +149,13 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public E next()
 		{
 			
-			// TODO Auto-generated method stub
-			return null;
+			if (hasNext())
+			{
+				Element temp = curr.next;
+				curr = curr.next;
+				return temp.object;
+			}
+			else throw new NoSuchElementException();
 			
 		}
 		
@@ -159,8 +173,13 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public E previous()
 		{
 			
-			// TODO Auto-generated method stub
-			return null;
+			if (hasPrevious())
+			{
+				Element temp = curr.prev;
+				curr = curr.prev;
+				return temp.object;
+			}
+			else throw new NoSuchElementException();
 			
 		}
 		
@@ -186,7 +205,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		@Override
 		public void set(E e)
 		{
-			// TODO Auto-generated method stub
+			
+			curr.object = e;
 			
 		}
 		
@@ -196,7 +216,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	{
 		
 		// make a head
-		head = null;
+		head.next = tail;
+		tail.prev = head;
 		
 	}
 	
@@ -204,18 +225,25 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	@Override
 	public boolean add(E e)
 	{
-		// TODO
 		
+		tail.prev.next = new Element(e, tail, tail.prev);
 		return true;
 		
 	}
 	
 	
 	@Override
-	public void add(int index, E element)
+	public void add(int index, E e)
 	{
 		
-		// TODO
+		// TODO: fix counting probably
+		Element temp = head.next;
+		for (int x = 0; x < index; x++)
+		{
+			if (temp.next == null) throw new NoSuchElementException();
+		}
+		temp.next = new Element(e, temp.next, temp.prev);
+		
 	}
 	
 	
@@ -223,15 +251,23 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public void clear()
 	{
 		
-		// TODO
+		head = new Element(null);
+		tail = new Element(null);
+		head.next = tail;
+		tail.prev = head;
+		
 	}
 	
 	
 	@Override
-	public boolean contains(E element)
+	public boolean contains(E e)
 	{
 		
-		// TODO
+		Iterator<E> it = this.iterator();
+		while (it.hasNext())
+		{
+			if (it.next() == e) return true;
+		}
 		return false;
 		
 	}
@@ -241,27 +277,37 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public E get(int index)
 	{
 		
-		// TODO
-		return null;
+		if (index > size()) throw new NoSuchElementException();
+		Iterator<E> it = this.iterator();
+		for (int x = 0; x < index; x++)
+		{
+			it.next();
+		}
+		return it.next();
 		
 	}
 	
 	
 	@Override
-	public E set(int index, E element)
+	public E set(int index, E e)
 	{
 		
-		// TODO
-		return null;
+		E temp = remove(index);
+		add(index, e);
+		return temp;
 		
 	}
 	
 	
 	@Override
-	public int indexOf(E element)
+	public int indexOf(E e)
 	{
 		
-		// TODO
+		Iterator<E> it = this.iterator();
+		for (int x = 0; it.hasNext(); x++)
+		{
+			if (it.next() == e) return x;
+		}
 		return -1;
 		
 	}
@@ -270,9 +316,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	@Override
 	public boolean isEmpty()
 	{
-		// TODO
 		
-		return false;
+		return head.next == tail;
 		
 	}
 	
@@ -299,8 +344,15 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public E remove(int index)
 	{
 		
-		// TODO
-		return null;
+		if (index > size()) throw new NoSuchElementException();
+		Element temp = head.next;
+		for (int x = 0; x < index; x++)
+		{
+			temp = temp.next;
+		}
+		E tempE = temp.object;
+		temp.prev.next = temp.next;
+		return tempE;
 		
 	}
 	
@@ -309,7 +361,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public boolean remove(E e)
 	{
 		
-		// TODO
+		remove(indexOf(e));
 		return true;
 		
 	}
@@ -319,8 +371,14 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public int size()
 	{
 		
-		// TODO
-		return -1;
+		int x = 0;
+		Iterator it = this.iterator();
+		while (it.hasNext())
+		{
+			x++;
+			it.next();
+		}
+		return x;
 		
 	}
 	
@@ -331,7 +389,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		ListIterator<E> iter = new InnerListIterator();
 		while (iter.hasNext()) iter.next();
 		String retStr = "";
-		// TODO use reverse direction of the iterator
+		// TODO use reverse direction of the iterator DONE
+		while (iter.hasPrevious()) retStr += iter.previous();
 		return retStr;
 		
 	}
@@ -340,7 +399,10 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public void add(TwoWayLinkedListWithHead<E> other)
 	{
 		
-		// TODO
+		if (this.equals(other)) return;
+		// TODO DONE
+		tail.prev.next = other.head.next;
+		
 	}
 	
 }
@@ -350,7 +412,6 @@ class Link
 	
 	public String ref;
 	
-	// in the future there will be more fields
 	public Link(String ref)
 	{
 		
@@ -360,13 +421,25 @@ class Link
 	
 	
 	@Override
-	public boolean equals(Object obj)
+	public boolean equals(Object other)
 	{
 		
-		// TODO
-		return true;
+		if (other.getClass() != this.getClass()) return false;
+		Link temp = (Link) other;
+		return ref.contentEquals(temp.ref);
 		
 	}
+	
+	
+	@Override
+	public String toString()
+	{
+		
+		return ref;
+		
+	}
+	
+	// in the future there will be more fields
 	
 }
 

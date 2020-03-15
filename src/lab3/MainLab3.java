@@ -54,7 +54,7 @@ public class MainLab3
 			// clear
 			if (word[0].equalsIgnoreCase("clear") && word.length == 1)
 			{
-				doc[currentDocNo].link.clear();
+				doc[currentDocNo].links.clear();
 				continue;
 			}
 			// show
@@ -66,19 +66,19 @@ public class MainLab3
 			// reverse
 			if (word[0].equalsIgnoreCase("reverse") && word.length == 1)
 			{
-				System.out.println(doc[currentDocNo].toStringReverse());
+				System.out.println(doc[currentDocNo].links.toStringReverse());
 				continue;
 			}
 			// size
 			if (word[0].equalsIgnoreCase("size") && word.length == 1)
 			{
-				System.out.println(doc[currentDocNo].link.size());
+				System.out.println(doc[currentDocNo].links.size());
 				continue;
 			}
 			// add str
 			if (word[0].equalsIgnoreCase("add") && word.length == 2)
 			{
-				System.out.println(doc[currentDocNo].link.add(new Link(word[1])));
+				System.out.println(doc[currentDocNo].links.add(new Link(word[1])));
 				continue;
 			}
 			// addi index str
@@ -87,7 +87,7 @@ public class MainLab3
 				int index = Integer.parseInt(word[1]);
 				try
 				{
-					doc[currentDocNo].link.add(index, new Link(word[2]));
+					doc[currentDocNo].links.add(index, new Link(word[2]));
 				}
 				catch (NoSuchElementException e)
 				{
@@ -101,7 +101,7 @@ public class MainLab3
 				int index = Integer.parseInt(word[1]);
 				try
 				{
-					Link l = doc[currentDocNo].link.get(index);
+					Link l = doc[currentDocNo].links.get(index);
 					System.out.println(l.ref);
 				}
 				catch (NoSuchElementException e)
@@ -116,7 +116,7 @@ public class MainLab3
 				int index = Integer.parseInt(word[1]);
 				try
 				{
-					Link l = doc[currentDocNo].link.set(index, new Link(word[2]));
+					Link l = doc[currentDocNo].links.set(index, new Link(word[2]));
 					System.out.println(l.ref);
 				}
 				catch (NoSuchElementException e)
@@ -129,7 +129,7 @@ public class MainLab3
 			// index str
 			if (word[0].equalsIgnoreCase("index") && word.length == 2)
 			{
-				int index = doc[currentDocNo].link.indexOf(new Link(word[1]));
+				int index = doc[currentDocNo].links.indexOf(new Link(word[1]));
 				System.out.println(index);
 				continue;
 			}
@@ -139,7 +139,7 @@ public class MainLab3
 				int index = Integer.parseInt(word[1]);
 				try
 				{
-					Link l = doc[currentDocNo].link.remove(index);
+					Link l = doc[currentDocNo].links.remove(index);
 					System.out.println(l.ref);
 				}
 				catch (NoSuchElementException e)
@@ -151,14 +151,14 @@ public class MainLab3
 			// rem str
 			if (word[0].equalsIgnoreCase("rem") && word.length == 2)
 			{
-				System.out.println(doc[currentDocNo].link.remove(new Link(word[1])));
+				System.out.println(doc[currentDocNo].links.remove(new Link(word[1])));
 				continue;
 			}
 			// addl <indexOfListArray>
 			if (word[0].equalsIgnoreCase("addl") && word.length == 2)
 			{
 				int number = Integer.parseInt(word[1]);
-				doc[currentDocNo].link.add(doc[number].link);
+				doc[currentDocNo].links.add(doc[number].links);
 				continue;
 			}
 			System.out.println("Wrong command");
