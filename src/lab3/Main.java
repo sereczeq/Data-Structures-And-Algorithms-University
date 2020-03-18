@@ -152,7 +152,14 @@ public class Main
 			// rem str
 			if (word[0].equalsIgnoreCase("rem") && word.length == 2)
 			{
-				System.out.println(doc[currentDocNo].links.remove(new Link(word[1])));
+				try
+				{
+					System.out.println(doc[currentDocNo].links.remove(new Link(word[1])));
+				}
+				catch (NoSuchElementException e)
+				{
+					System.out.println("error");
+				}
 				continue;
 			}
 			// addl <indexOfListArray>

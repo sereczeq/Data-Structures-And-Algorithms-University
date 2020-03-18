@@ -305,7 +305,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		Iterator<E> it = this.iterator();
 		for (int x = 0; it.hasNext(); x++)
 		{
-			if (it.next() == e) return x;
+			if (it.next().equals(e)) return x;
 		}
 		return -1;
 		
@@ -340,7 +340,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	
 	
 	@Override
-	public E remove(int index)
+	public E remove(int index) throws NoSuchElementException
 	{
 		
 		if (index > size() || index < 0) throw new NoSuchElementException();
