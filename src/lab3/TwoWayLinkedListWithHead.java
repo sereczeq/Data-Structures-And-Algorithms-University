@@ -45,6 +45,10 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	private class Element
 	{
 		
+		E object;
+		Element next = null;
+		Element prev = null;
+		
 		public Element(E e)
 		{
 			
@@ -61,10 +65,6 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 			this.prev = prev;
 			
 		}
-		
-		E object;
-		Element next = null;
-		Element prev = null;
 		
 	}
 	
@@ -91,7 +91,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return pos.next != null;
+			return pos.next != tail;
 			
 		}
 		
@@ -102,9 +102,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 			
 			if (hasNext())
 			{
-				Element temp = pos.next;
 				pos = pos.next;
-				return temp.object;
+				return pos.object;
 			}
 			else throw new NoSuchElementException();
 			
@@ -115,7 +114,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	private class InnerListIterator implements ListIterator<E>
 	{
 		
-		Element curr; // renamed "p" to "curr"
+		Element curr = head; // renamed "p" to "curr"
 		// TODO maybe more fields....
 		
 		@Override
@@ -131,7 +130,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return curr.next != null;
+			return curr.next != tail;
 			
 		}
 		
@@ -140,7 +139,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasPrevious()
 		{
 			
-			return curr.prev != null;
+			return curr.prev != head && curr.prev != null;
 			
 		}
 		
@@ -151,9 +150,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 			
 			if (hasNext())
 			{
-				Element temp = curr.next;
 				curr = curr.next;
-				return temp.object;
+				return curr.object;
 			}
 			else throw new NoSuchElementException();
 			
@@ -175,9 +173,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 			
 			if (hasPrevious())
 			{
-				Element temp = curr.prev;
 				curr = curr.prev;
-				return temp.object;
+				return curr.object;
 			}
 			else throw new NoSuchElementException();
 			
@@ -226,7 +223,9 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public boolean add(E e)
 	{
 		
-		tail.prev.next = new Element(e, tail, tail.prev);
+		Element elem = new Element(e, tail, tail.prev);
+		tail.prev.next = elem;
+		tail.prev = elem;
 		return true;
 		
 	}
@@ -240,7 +239,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		Element temp = head.next;
 		for (int x = 0; x < index; x++)
 		{
-			if (temp.next == null) throw new NoSuchElementException();
+			if (temp.next == null || index < 0) throw new NoSuchElementException();
 		}
 		temp.next = new Element(e, temp.next, temp.prev);
 		
@@ -277,7 +276,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public E get(int index)
 	{
 		
-		if (index > size()) throw new NoSuchElementException();
+		if (index > size() || index < 0) throw new NoSuchElementException();
 		Iterator<E> it = this.iterator();
 		for (int x = 0; x < index; x++)
 		{
@@ -344,7 +343,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public E remove(int index)
 	{
 		
-		if (index > size()) throw new NoSuchElementException();
+		if (index > size() || index < 0) throw new NoSuchElementException();
 		Element temp = head.next;
 		for (int x = 0; x < index; x++)
 		{
@@ -386,12 +385,25 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public String toStringReverse()
 	{
 		
-		ListIterator<E> iter = new InnerListIterator();
-		while (iter.hasNext()) iter.next();
+		// changes signature of this method
 		String retStr = "";
+		ListIterator<E> iter = new InnerListIterator();
+		while (iter.hasNext()) retStr = "\n" + iter.next();
 		// TODO use reverse direction of the iterator DONE
-		while (iter.hasPrevious()) retStr += iter.previous();
+		while (iter.hasPrevious()) retStr += "\n" + iter.previous();
 		return retStr;
+		
+	}
+	
+	
+	@Override
+	public String toString()
+	{
+		
+		String s = "";
+		Iterator<E> it = this.iterator();
+		while (it.hasNext()) s += "\n" + it.next();
+		return s;
 		
 	}
 	
@@ -401,7 +413,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		
 		if (this.equals(other)) return;
 		// TODO DONE
-		tail.prev.next = other.head.next;
+		for (E e : other) add(e);
+		other.clear();
 		
 	}
 	
@@ -490,6 +503,16 @@ class Document // ready
 		
 		String s = "Document: " + name;
 		s += links.toString();
+		return s;
+		
+	}
+	
+	
+	public String toStringReverse()
+	{
+		
+		String s = "Document: " + name;
+		s += links.toStringReverse();
 		return s;
 		
 	}

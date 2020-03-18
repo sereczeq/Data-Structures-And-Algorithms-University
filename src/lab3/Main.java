@@ -3,7 +3,7 @@ package lab3;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class MainLab3
+public class Main
 {
 	
 	static Scanner scan; // for input stream
@@ -66,7 +66,8 @@ public class MainLab3
 			// reverse
 			if (word[0].equalsIgnoreCase("reverse") && word.length == 1)
 			{
-				System.out.println(doc[currentDocNo].links.toStringReverse());
+				// changed code here, links has no idea what document it is in
+				System.out.println(doc[currentDocNo].toStringReverse());
 				continue;
 			}
 			// size
