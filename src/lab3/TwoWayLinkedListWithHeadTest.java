@@ -206,7 +206,7 @@ class TwoWayLinkedListWithHeadTest
 		links2.add(c);
 		links2.add(b);
 		links.add(links2);
-		// after adding empty second list
+		// adding empty second list
 		assertTrue(links2.isEmpty());
 		assertEquals("\na\nb\nc\nb", links.toString());
 		// adding an empty list

@@ -483,15 +483,6 @@ class Document // ready
 	}
 	
 	
-	// added for testing purposes
-	public Document(String name)
-	{
-		
-		this.name = name;
-		
-	}
-	
-	
 	public void load(Scanner scan)
 	{
 		
