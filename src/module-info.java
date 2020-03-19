@@ -1,2 +1,7 @@
-module secondSemester {
+module secondSemester
+{
+	
+	requires java.base;
+	requires org.junit.jupiter.api;
+	
 }

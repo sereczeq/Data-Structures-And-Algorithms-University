@@ -91,7 +91,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return pos.next != tail;
+			return pos.next != tail && pos.next != null;
 			
 		}
 		
@@ -130,7 +130,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return curr.next != tail;
+			return curr.next != tail && curr.next != null;
 			
 		}
 		
@@ -203,7 +203,11 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public void set(E e)
 		{
 			
-			curr.object = e;
+			if (curr != head && curr != tail)
+			{
+				curr.object = e;
+			}
+			else throw new NoSuchElementException();
 			
 		}
 		
@@ -236,12 +240,15 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	{
 		
 		// TODO: fix counting probably
-		Element temp = head.next;
+		if (index < 0) throw new NoSuchElementException();
+		Element temp = head;
 		for (int x = 0; x < index; x++)
 		{
-			if (temp.next == null || index < 0) throw new NoSuchElementException();
+			if (temp.next == null || temp.next == tail) throw new NoSuchElementException();
+			temp = temp.next;
 		}
-		temp.next = new Element(e, temp.next, temp.prev);
+		Element elem = new Element(e, temp.next, temp.prev);
+		temp.next = elem;
 		
 	}
 	
@@ -343,14 +350,16 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public E remove(int index) throws NoSuchElementException
 	{
 		
-		if (index > size() || index < 0) throw new NoSuchElementException();
-		Element temp = head.next;
-		for (int x = 0; x < index; x++)
+		if (index > size() || index < 0 || size() == 0) throw new NoSuchElementException();
+		Element temp = head;
+		for (int x = 0; x <= index; x++)
 		{
+			if (temp.next == null || temp.next == tail || index < 0) throw new NoSuchElementException();
 			temp = temp.next;
 		}
 		E tempE = temp.object;
 		temp.prev.next = temp.next;
+		temp.next.prev = temp.prev;
 		return tempE;
 		
 	}
@@ -371,7 +380,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	{
 		
 		int x = 0;
-		Iterator it = this.iterator();
+		Iterator<E> it = this.iterator();
 		while (it.hasNext())
 		{
 			x++;
@@ -411,6 +420,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public void add(TwoWayLinkedListWithHead<E> other)
 	{
 		
+		if (other == null) throw new NullPointerException();
 		if (this.equals(other)) return;
 		// TODO DONE
 		for (E e : other) add(e);
@@ -469,6 +479,15 @@ class Document // ready
 		
 		this.name = name;
 		load(scan);
+		
+	}
+	
+	
+	// added for testing purposes
+	public Document(String name)
+	{
+		
+		this.name = name;
 		
 	}
 	
