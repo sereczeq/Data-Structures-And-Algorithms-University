@@ -55,6 +55,9 @@ class TwoWayLinkedListWithHeadTest
 		assertEquals("\na\nb", links.toString());
 		links.add(1, c);
 		assertEquals("\na\nc\nb", links.toString());
+		assertEquals("\nb\nc\na", links.toStringReverse());
+		assertEquals(c, links.remove(1));
+		assertEquals("\nb\na", links.toStringReverse());
 		
 	}
 	

@@ -348,7 +348,6 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	
 	
 	@Override
-	// this method throws nullpointer
 	public E remove(int index) throws NoSuchElementException
 	{
 		
