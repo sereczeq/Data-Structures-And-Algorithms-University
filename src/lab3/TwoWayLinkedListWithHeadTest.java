@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.AfterEach;
@@ -220,12 +222,42 @@ class TwoWayLinkedListWithHeadTest
 		links = new TwoWayLinkedListWithHead<>();
 		links2.add(links);
 		assertEquals("\na\nb\nc\nb", links2.toString());
-		// not working because some final stuff
-		// //adding null
-		// links2 = null;
-		// links.add(a);
-		// links.add(b);
-		// assertThrows(NullPointerException.class, () -> links.add(links2));
+		// adding null
+		links2 = null;
+		links.add(a);
+		links.add(b);
+		try
+		{
+			links.add(links2);
+			fail("no exception thrown");
+		}
+		catch (NullPointerException e)
+		{
+		}
+		
+	}
+	
+	
+	@Test
+	void testIterator()
+	{
+		
+		Iterator it = links.iterator();
+		assertFalse(it.hasNext());
+		links.add(a);
+		links.add(b);
+		links.add(c);
+		it = links.iterator();
+		for (Link link : links) assertEquals(link, it.next());
+		links.clear();
+		try
+		{
+			Object obj = it.next();
+			fail("no exception thrown " + obj);
+		}
+		catch (NoSuchElementException e)
+		{
+		}
 		
 	}
 	

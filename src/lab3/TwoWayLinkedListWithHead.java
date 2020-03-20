@@ -91,7 +91,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return pos.next != tail && pos.next != null;
+			return pos.next.object != null;
 			
 		}
 		
@@ -130,7 +130,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return curr.next != tail && curr.next != null;
+			return curr.next.object != null;
 			
 		}
 		

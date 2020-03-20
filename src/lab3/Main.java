@@ -165,8 +165,15 @@ public class Main
 			// addl <indexOfListArray>
 			if (word[0].equalsIgnoreCase("addl") && word.length == 2)
 			{
-				int number = Integer.parseInt(word[1]);
-				doc[currentDocNo].links.add(doc[number].links);
+				try
+				{
+					int number = Integer.parseInt(word[1]);
+					doc[currentDocNo].links.add(doc[number].links);
+				}
+				catch (Exception e)
+				{
+					System.out.println("error");
+				}
 				continue;
 			}
 			System.out.println("Wrong command");
