@@ -277,4 +277,23 @@ class TwoWayLinkedListWithHeadTest
 		
 	}
 	
+	
+	@Test
+	void testRandom()
+	{
+		
+		links.add(0, b);
+		links.add(0, a);
+		links.add(c);
+		links.remove(1);
+		links.add(1, b);
+		links.set(0, links.set(1, a));
+		assertTrue(links.contains(a));
+		assertTrue(links.contains(b));
+		assertTrue(links.contains(c));
+		links.add(0, links.remove(2));
+		assertEquals("\na\nb\nc", links.toStringReverse());
+		
+	}
+	
 }
