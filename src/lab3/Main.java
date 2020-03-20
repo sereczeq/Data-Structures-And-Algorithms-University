@@ -111,6 +111,7 @@ public class Main
 				}
 				continue;
 			}
+			
 			// set index str
 			if (word[0].equalsIgnoreCase("set") && word.length == 3)
 			{
@@ -134,6 +135,7 @@ public class Main
 				System.out.println(index);
 				continue;
 			}
+			
 			// remi index
 			if (word[0].equalsIgnoreCase("remi") && word.length == 2)
 			{
@@ -149,6 +151,7 @@ public class Main
 				}
 				continue;
 			}
+			// this causes nullPointerException
 			// rem str
 			if (word[0].equalsIgnoreCase("rem") && word.length == 2)
 			{

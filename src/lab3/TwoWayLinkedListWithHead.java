@@ -247,8 +247,9 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 			if (temp.next == null || temp.next == tail) throw new NoSuchElementException();
 			temp = temp.next;
 		}
-		Element elem = new Element(e, temp.next, temp.prev);
+		Element elem = new Element(e, temp.next, temp.next.prev);
 		temp.next = elem;
+		temp.next.next.prev = elem;
 		
 	}
 	
@@ -347,6 +348,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	
 	
 	@Override
+	// this method throws nullpointer
 	public E remove(int index) throws NoSuchElementException
 	{
 		
@@ -354,7 +356,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		Element temp = head;
 		for (int x = 0; x <= index; x++)
 		{
-			if (temp.next == null || temp.next == tail || index < 0) throw new NoSuchElementException();
+			if (temp.next == null || temp.next == tail) throw new NoSuchElementException();
 			temp = temp.next;
 		}
 		E tempE = temp.object;

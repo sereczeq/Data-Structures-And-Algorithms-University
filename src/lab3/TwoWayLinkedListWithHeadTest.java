@@ -147,8 +147,21 @@ class TwoWayLinkedListWithHeadTest
 		links.add(b);
 		links.add(c);
 		assertEquals(a, links.remove(0));
+		try
+		{
+			links.remove(3);
+			fail("should throw exception");
+		}
+		catch (NoSuchElementException e)
+		{
+		}
 		assertEquals(c, links.remove(1));
 		assertEquals(b, links.remove(0));
+		assertTrue(links.isEmpty());
+		//
+		links.clear();
+		links.add(0, a);
+		links.remove(0);
 		assertTrue(links.isEmpty());
 		
 	}
@@ -242,7 +255,7 @@ class TwoWayLinkedListWithHeadTest
 	void testIterator()
 	{
 		
-		Iterator it = links.iterator();
+		Iterator<Link> it = links.iterator();
 		assertFalse(it.hasNext());
 		links.add(a);
 		links.add(b);
