@@ -174,9 +174,9 @@ class TwoWayLinkedListWithHeadTest
 	void testRemoveE()
 	{
 		
-		assertThrows(NoSuchElementException.class, () -> links.remove(a));
+		assertFalse(links.remove(a));
 		links.add(a);
-		assertThrows(NoSuchElementException.class, () -> links.remove(b));
+		assertFalse(links.remove(b));
 		assertTrue(links.remove(a));
 		assertTrue(links.isEmpty());
 		
