@@ -430,8 +430,10 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		
 		if (other == null) throw new NullPointerException();
 		if (this.equals(other)) return;
-		// TODO DONE
-		for (E e : other) add(e);
+		
+		tail.prev.next = other.head.next;
+		other.head.next.prev = tail.prev;
+		tail = other.tail;
 		other.clear();
 		
 	}

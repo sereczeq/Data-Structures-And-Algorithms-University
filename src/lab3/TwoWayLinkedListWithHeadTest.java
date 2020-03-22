@@ -216,9 +216,9 @@ class TwoWayLinkedListWithHeadTest
 		
 		links.add(a);
 		links.add(b);
+		// if the same nothing happens
 		TwoWayLinkedListWithHead<Link> links2 = links;
 		links.add(links);
-		// if the same nothing happens
 		assertEquals(links, links2);
 		links2 = new TwoWayLinkedListWithHead<>();
 		links2.add(c);
