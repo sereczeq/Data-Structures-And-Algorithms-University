@@ -370,8 +370,15 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 	public boolean remove(E e)
 	{
 		
-		remove(indexOf(e));
-		return true;
+		try
+		{
+			remove(indexOf(e));
+			return true;
+		}
+		catch (NoSuchElementException ex)
+		{
+			return false;
+		}
 		
 	}
 	
