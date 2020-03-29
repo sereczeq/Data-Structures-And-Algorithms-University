@@ -68,16 +68,18 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 			
 			Element temp = next;
 			next = elem;
-			elem.next = next;
+			elem.prev = this;
+			temp.prev = elem;
+			elem.next = temp;
 			
 		}
 		
 		
 		// assert it is NOT a sentinel
-		public void remove() throws UnsupportedOperationException
+		public void remove()
 		{
 			
-			if (object == null) throw new UnsupportedOperationException("can't remove a sentinel");
+			if (object == null) throw new NoSuchElementException("can't remove sentinel / element with null object");
 			if (prev != null) prev.next = next;
 			if (next != null) next.prev = prev;
 			
@@ -121,9 +123,10 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 			if (hasNext())
 			{
 				curr = curr.next;
+				if (curr == sentinel) curr = curr.next;
 				return curr.object;
 			}
-			else throw new NoSuchElementException();
+			throw new NoSuchElementException();
 			
 		}
 		
@@ -158,9 +161,10 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 			if (hasNext())
 			{
 				curr = curr.next;
+				if (curr == sentinel) curr = curr.next;
 				return curr.object;
 			}
-			else throw new NoSuchElementException();
+			throw new NoSuchElementException();
 			
 		}
 		
@@ -199,9 +203,10 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 			if (hasPrevious())
 			{
 				curr = curr.prev;
+				if (curr == sentinel) curr = curr.prev;
 				return curr.object;
 			}
-			else throw new NoSuchElementException();
+			throw new NoSuchElementException();
 			
 		}
 		
@@ -247,19 +252,11 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public boolean add(E e)
 	{
 		
-		if (isEmpty())
+		if (isEmpty()) sentinel.next = sentinel.prev = new Element(e, sentinel, sentinel);
+		else
 		{
-			Element elem = new Element(e);
-			elem.prev = elem;
-			elem.next = elem;
-			sentinel.next = elem;
-			return true;
+			sentinel.next.addAfter(new Element(e));
 		}
-		Element temp = sentinel.next;
-		Element elem = new Element(e, temp.prev, temp);
-		sentinel.next = elem;
-		temp.prev.next = elem;
-		temp.prev = elem;
 		return true;
 		
 	}
@@ -268,8 +265,9 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	private Element getElement(int index)
 	{
 		
-		Element temp = sentinel.next;
-		for (int x = 0; temp.next != null && x < size(); x++, temp = temp.next) if (x == index) return temp;
+		Element elem = sentinel;
+		for (int x = 0; elem.next != null && x <= index; x++, elem = elem.next)
+			if (x == index && elem != sentinel) return elem;
 		throw new NoSuchElementException();
 		
 	}
@@ -278,7 +276,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	private Element getElement(E obj)
 	{
 		
-		return (getElement(indexOf(obj)));
+		return getElement(indexOf(obj));
 		
 	}
 	
@@ -296,7 +294,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void clear()
 	{
 		
-		sentinel.next = null;
+		sentinel.next = sentinel.prev = null;
 		
 	}
 	
@@ -305,7 +303,10 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public boolean contains(E element)
 	{
 		
-		return indexOf(element) > -1;
+		if (isEmpty()) return false;
+		for (Element elem = sentinel.next; elem.next != null && elem.next != sentinel; elem = elem.next)
+			if (elem.object == element) return true;
+		return false;
 		
 	}
 	
@@ -332,8 +333,9 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public int indexOf(E element)
 	{
 		
-		Element temp = sentinel.next;
-		for (int x = 0; temp.next != null && x < size(); x++, temp = temp.next) if (temp == element) return x;
+		// TODO -1 or 0
+		Element elem = sentinel;
+		for (int x = -1; elem.next != null; x++, elem = elem.next) if (elem.object == element) return x;
 		throw new NoSuchElementException();
 		
 	}
@@ -370,11 +372,12 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public E remove(int index)
 	{
 		
-		Element temp = sentinel.next;
-		for (int x = 0; temp.next != null && x < size(); x++, temp = temp.next) if (x == index)
+		Element elem = sentinel;
+		for (int x = 0; elem.next != null && x <= index; x++, elem = elem.next) if (x == index && elem != sentinel)
 		{
-			temp.prev.next = temp.next;
-			temp.next.prev = temp.prev;
+			elem.next.prev = elem.prev;
+			elem.prev.next = elem.next;
+			return elem.object;
 		}
 		throw new NoSuchElementException();
 		
@@ -402,9 +405,8 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public int size()
 	{
 		
-		Element temp = sentinel.next;
 		int x = 0;
-		for (x = 0; temp.next != null && x < size(); x++, temp = temp.next);
+		for (Element elem = sentinel; elem.next != null && elem.next != sentinel; x++, elem = elem.next);
 		return x;
 		
 	}
@@ -414,7 +416,10 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void add(TwoWayCycledOrderedListWithSentinel<E> other)
 	{
 		
-		for (E elem : other) add(elem);
+		while (other.size > 0)
+		{
+			add(other.remove(0));
+		}
 		
 	}
 	
@@ -423,9 +428,23 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void removeAll(E e)
 	{
 		
-		clear();
+		while (contains(e)) remove(e);
 		
-		// TODO: not sure if this works
+	}
+	
+	
+	@Override
+	public String toString()
+	{
+		
+		String string = "";
+		Iterator<E> it = iterator();
+		for (int x = 0; x < size(); x++)
+		{
+			string += "\n" + it.next();
+		}
+		return string;
+		
 	}
 	
 }
@@ -557,7 +576,13 @@ class Document
 	{
 		
 		String retStr = "Document: " + name;
-		retStr += link.toString();
+		Iterator it = link.iterator();
+		for (int x = 0; it.hasNext() && x < link.size(); x++)
+		{
+			if (x == 0 || x == 9) retStr += "\n";
+			retStr += it.next();
+			if (it.hasNext() || x != 8) retStr += " ";
+		}
 		return retStr;
 		
 	}
