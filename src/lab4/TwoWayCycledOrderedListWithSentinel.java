@@ -333,7 +333,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		
 		if (isEmpty()) return false;
 		for (Element elem = sentinel.next; elem.next != null && elem != sentinel; elem = elem.next)
-			if (elem.object == element) return true;
+			if (elem.object.equals(element)) return true;
 		return false;
 		
 	}
@@ -364,7 +364,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		Iterator<E> it = iterator();
 		for (int x = 0; x < size(); x++)
 		{
-			if (it.next() == element) return x;
+			if (it.next().equals(element)) return x;
 		}
 		throw new NoSuchElementException();
 		
@@ -465,7 +465,12 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void removeAll(E e)
 	{
 		
-		while (contains(e)) remove(e);
+		// while (contains(e))
+		// {
+		// System.out.println("doing");
+		// remove(e);
+		// }
+		while (remove(e));
 		
 	}
 	
@@ -547,6 +552,7 @@ class Document
 	final static Pattern regex = Pattern
 			// .compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>(?<par>\\()(?<number>[0-9-]*)?\\))?");
 			.compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>\\((?<number>[0-9-]*)\\))?$");
+	final static Pattern docName = Pattern.compile("^[a-z]*$");
 	
 	public Document(String name, Scanner scan)
 	{
@@ -574,8 +580,8 @@ class Document
 	static boolean isCorrectId(String id)
 	{
 		
-		return true;
-		// TODO: what is this method supposed to do?
+		Matcher matcher = docName.matcher(id.toLowerCase());
+		return matcher.find();
 		
 	}
 	
