@@ -537,21 +537,15 @@ class Document
 	static Link createLink(String line)
 	{
 		
-		System.out.println(line);
-		Matcher matcher = regex.matcher(line);
-		matcher.matches();
-		String s = matcher.group("ref");
+		String s = line.split("=")[1].split("\\(")[0];
 		int x = 1;
 		try
 		{
-			String numbers = matcher.group(3);
-			System.out.println(numbers);
-			x = Integer.parseInt(numbers);
+			x = Integer.parseInt(line.split("\\(")[1].split("\\)")[0]);
 			if (x < 0) x = 1;
 		}
-		catch (NumberFormatException | IllegalStateException e)
+		catch (ArrayIndexOutOfBoundsException | NumberFormatException e)
 		{
-			
 		}
 		return new Link(s, x);
 		
@@ -574,10 +568,16 @@ class Document
 		
 		String retStr = "Document: " + name;
 		ListIterator<Link> iter = link.listIterator();
-		while (iter.hasNext()) iter.next();
-		// TODO
+		Link first = iter.next();
+		Link elem = first;
+		while (iter.hasNext() && !elem.equals(first)) elem = iter.next();
+		retStr += "\n" + elem;
 		while (iter.hasPrevious())
 		{
+			Link temp = iter.previous();
+			retStr += "\n" + temp;
+			if (temp.equals(first)) break;
+			
 		}
 		return retStr;
 		
