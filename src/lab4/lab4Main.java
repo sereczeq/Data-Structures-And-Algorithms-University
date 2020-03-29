@@ -79,7 +79,8 @@ public class lab4Main
 			// add str
 			if (word[0].equalsIgnoreCase("add") && word.length == 2)
 			{
-				Link link = Document.createLink(word[1]);
+				// Link link = Document.createLink(word[1]);
+				Link link = new Link(word[1]);
 				if (link == null) System.out.println("error");
 				else System.out.println(doc[currentDocNo].link.add(link));
 				continue;

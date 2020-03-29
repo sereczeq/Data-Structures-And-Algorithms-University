@@ -47,6 +47,7 @@ class TwoWayCycledOrderedListWithSentinelTest
 		assertTrue(links.add(c));
 		assertTrue(links.add(b));
 		assertEquals(links.toString(), abc);
+		assertTrue(links.add(c));
 		
 	}
 	
