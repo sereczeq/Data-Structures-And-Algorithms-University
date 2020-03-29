@@ -123,15 +123,7 @@ class TwoWayCycledOrderedListWithSentinelTest
 		assertEquals(links.indexOf(b), 1);
 		assertEquals(links.indexOf(c), 2);
 		links.clear();
-		try
-		{
-			links.indexOf(a);
-			fail("should throw Exception");
-		}
-		catch (NoSuchElementException e)
-		{
-			
-		}
+		assertEquals(links.indexOf(a), -1);
 		
 	}
 	

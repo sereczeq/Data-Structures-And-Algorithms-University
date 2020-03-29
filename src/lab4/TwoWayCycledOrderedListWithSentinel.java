@@ -366,7 +366,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		{
 			if (it.next().equals(element)) return x;
 		}
-		throw new NoSuchElementException();
+		return -1;
 		
 	}
 	
