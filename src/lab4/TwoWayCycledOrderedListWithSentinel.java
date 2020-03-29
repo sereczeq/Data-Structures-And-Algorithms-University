@@ -252,16 +252,38 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	}
 	
 	
-	// @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean add(E e)
 	{
 		
-		if (isEmpty()) sentinel.next = sentinel.prev = new Element(e, sentinel, sentinel);
-		else
+		if (isEmpty())
 		{
-			sentinel.next.addAfter(new Element(e));
+			sentinel.next = sentinel.prev = new Element(e, sentinel, sentinel);
+			return true;
 		}
+		else if (e instanceof Comparable)
+		{
+			
+			Element elem = sentinel.next;
+			for (int x = 0; x < size(); x++)
+			{
+				if (((Comparable<E>) elem.object).compareTo(e) > 0)
+				{
+					elem.prev.addAfter(new Element(e));
+					return true;
+				}
+				else if (((Comparable<E>) elem.object).compareTo(e) == 0
+						&& ((Comparable<E>) elem.object).compareTo(e) != 0)
+				{
+					elem.addAfter(new Element(e));
+					return true;
+				}
+				elem = elem.next;
+			}
+			
+		}
+		sentinel.prev.addAfter(new Element(e));
 		return true;
 		
 	}
@@ -489,7 +511,7 @@ class Link implements Comparable<Link>
 	{
 		
 		this.ref = ref;
-		this.weight = weight;
+		this.weight = weight > 0 ? weight : 1;
 		
 	}
 	
@@ -528,7 +550,9 @@ class Document
 	
 	public String name;
 	public TwoWayCycledOrderedListWithSentinel<Link> link;
-	final static Pattern regex = Pattern.compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>\\((?<number>[0-9-]*)\\))?");
+	final static Pattern regex = Pattern
+			// .compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>(?<par>\\()(?<number>[0-9-]*)?\\))?");
+			.compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>\\((?<number>[0-9-]*)\\))?$");
 	
 	public Document(String name, Scanner scan)
 	{
@@ -547,17 +571,8 @@ class Document
 		{
 			String line = scan.next().toLowerCase();
 			if (line.contains("eod")) break;
-			if (correctLink(line)) link.add(createLink(line));
+			if (createLink(line) != null) link.add(createLink(line));
 		}
-		
-	}
-	
-	
-	private static boolean correctLink(String line)
-	{
-		
-		Matcher matcher = regex.matcher(line);
-		return matcher.find();
 		
 	}
 	
@@ -577,17 +592,17 @@ class Document
 	static Link createLink(String line)
 	{
 		
-		String s = line.split("=")[1].split("\\(")[0];
-		int x = 1;
-		try
+		Matcher matcher = regex.matcher(line);
+		if (matcher.find())
 		{
-			x = Integer.parseInt(line.split("\\(")[1].split("\\)")[0]);
-			if (x < 0) x = 1;
+			if (matcher.group("number") != null)
+			{
+				if (Integer.parseInt(matcher.group("number")) < 0) return null;
+				return new Link(matcher.group("ref"), Integer.parseInt(matcher.group("number")));
+			}
+			return new Link(matcher.group("ref"));
 		}
-		catch (ArrayIndexOutOfBoundsException | NumberFormatException e)
-		{
-		}
-		return new Link(s, x);
+		return null;
 		
 	}
 	
@@ -597,12 +612,12 @@ class Document
 	{
 		
 		String retStr = "Document: " + name;
-		Iterator it = link.iterator();
-		for (int x = 0; it.hasNext() && x < link.size(); x++)
+		Iterator<Link> it = link.iterator();
+		for (int x = 0; x < link.size(); x++)
 		{
-			if (x == 0 || x == 9) retStr += "\n";
+			if (x == 0 || x == 10) retStr += "\n";
 			retStr += it.next();
-			if (it.hasNext() || x != 8) retStr += " ";
+			if (it.hasNext() && x != 9) retStr += " ";
 		}
 		return retStr;
 		
@@ -613,17 +628,13 @@ class Document
 	{
 		
 		String retStr = "Document: " + name;
-		ListIterator<Link> iter = link.listIterator();
-		Link first = iter.next();
-		Link elem = first;
-		while (iter.hasNext() && !elem.equals(first)) elem = iter.next();
-		retStr += "\n" + elem;
-		while (iter.hasPrevious())
+		
+		ListIterator<Link> it = link.listIterator();
+		for (int x = 0; x < link.size(); x++)
 		{
-			Link temp = iter.previous();
-			retStr += "\n" + temp;
-			if (temp.equals(first)) break;
-			
+			if (x == 0 || x == 10) retStr += "\n";
+			retStr += it.previous();
+			if (it.hasPrevious() && x != 9) retStr += " ";
 		}
 		return retStr;
 		
