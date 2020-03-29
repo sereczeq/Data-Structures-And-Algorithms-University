@@ -456,13 +456,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	{
 		
 		if (equals(other)) return;
-		while (other.size() > 0)
-		{
-			Element elem = new Element(other.remove(0), sentinel, sentinel.prev);
-			sentinel.prev.next = elem;
-			sentinel.prev = elem;
-			
-		}
+		while (other.size() > 0) add(other.remove(0));
 		
 	}
 	
@@ -617,7 +611,7 @@ class Document
 		{
 			if (x == 0 || x == 10) retStr += "\n";
 			retStr += it.next();
-			if (it.hasNext() && x != 9) retStr += " ";
+			if (x != link.size() - 1 && x != 9) retStr += " ";
 		}
 		return retStr;
 		
@@ -634,7 +628,7 @@ class Document
 		{
 			if (x == 0 || x == 10) retStr += "\n";
 			retStr += it.previous();
-			if (it.hasPrevious() && x != 9) retStr += " ";
+			if (x != link.size() - 1 && x != 9) retStr += " ";
 		}
 		return retStr;
 		
