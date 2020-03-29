@@ -7,6 +7,11 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/*
+ * All for loops with isEmpty() in front of them are just me being lazy
+ * TODO: change that to something normal or make a single method
+ */
+
 interface IList<E> extends Iterable<E>
 {
 	
@@ -242,7 +247,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public TwoWayCycledOrderedListWithSentinel()
 	{
 		
-		sentinel = new Element(null);
+		sentinel = new Element(null, sentinel, sentinel);
 		
 	}
 	
@@ -265,8 +270,9 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	private Element getElement(int index)
 	{
 		
-		Element elem = sentinel;
-		for (int x = 0; elem.next != null && x <= index; x++, elem = elem.next)
+		if (isEmpty()) throw new NoSuchElementException();
+		Element elem = sentinel.next;
+		for (int x = 0; elem.next != null && elem != sentinel && x <= index; x++, elem = elem.next)
 			if (x == index && elem != sentinel) return elem;
 		throw new NoSuchElementException();
 		
@@ -294,7 +300,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void clear()
 	{
 		
-		sentinel.next = sentinel.prev = null;
+		sentinel.next = sentinel.prev = sentinel;
 		
 	}
 	
@@ -304,7 +310,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	{
 		
 		if (isEmpty()) return false;
-		for (Element elem = sentinel.next; elem.next != null && elem.next != sentinel; elem = elem.next)
+		for (Element elem = sentinel.next; elem.next != null && elem != sentinel; elem = elem.next)
 			if (elem.object == element) return true;
 		return false;
 		
@@ -333,9 +339,11 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public int indexOf(E element)
 	{
 		
-		// TODO -1 or 0
-		Element elem = sentinel;
-		for (int x = -1; elem.next != null; x++, elem = elem.next) if (elem.object == element) return x;
+		Iterator<E> it = iterator();
+		for (int x = 0; x < size(); x++)
+		{
+			if (it.next() == element) return x;
+		}
 		throw new NoSuchElementException();
 		
 	}
@@ -345,7 +353,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public boolean isEmpty()
 	{
 		
-		return sentinel.next == null;
+		return sentinel.next == null || sentinel.next == sentinel;
 		
 	}
 	
@@ -373,7 +381,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	{
 		
 		Element elem = sentinel;
-		for (int x = 0; elem.next != null && x <= index; x++, elem = elem.next) if (x == index && elem != sentinel)
+		for (int x = -1; elem.next != null && x <= index; x++, elem = elem.next) if (x == index && elem != sentinel)
 		{
 			elem.next.prev = elem.prev;
 			elem.prev.next = elem.next;
@@ -412,13 +420,26 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	}
 	
 	
+	@Override
+	public boolean equals(Object other)
+	{
+		
+		return toString().contentEquals(other.toString());
+		
+	}
+	
+	
 	// @SuppressWarnings("unchecked")
 	public void add(TwoWayCycledOrderedListWithSentinel<E> other)
 	{
 		
-		while (other.size > 0)
+		if (equals(other)) return;
+		while (other.size() > 0)
 		{
-			add(other.remove(0));
+			Element elem = new Element(other.remove(0), sentinel, sentinel.prev);
+			sentinel.prev.next = elem;
+			sentinel.prev = elem;
+			
 		}
 		
 	}
