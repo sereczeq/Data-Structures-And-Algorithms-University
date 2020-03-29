@@ -552,7 +552,7 @@ class Document
 	final static Pattern regex = Pattern
 			// .compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>(?<par>\\()(?<number>[0-9-]*)?\\))?");
 			.compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>\\((?<number>[0-9-]*)\\))?$");
-	final static Pattern docName = Pattern.compile("^[a-z]*$");
+	final static Pattern docName = Pattern.compile("^[a-z].*$");
 	
 	public Document(String name, Scanner scan)
 	{
