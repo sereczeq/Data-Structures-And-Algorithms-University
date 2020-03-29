@@ -175,7 +175,7 @@ class TwoWayCycledOrderedListWithSentinelTest
 		links2.add(b);
 		links2.add(c);
 		links.add(links2);
-		assertEquals(links.toString(), abc + "\na(1)\na(1)\nb(2)\nb(2)\nc(3)\nc(3)");
+		assertEquals(links.toString(), "\na(1)\nb(2)\nb(2)\nc(3)\nc(3)");
 		assertTrue(links2.isEmpty());
 		// the same object test
 		links.clear();
