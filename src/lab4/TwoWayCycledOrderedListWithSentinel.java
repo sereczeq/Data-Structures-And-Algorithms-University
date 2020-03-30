@@ -276,13 +276,6 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 					elem.prev.addAfter(new Element(e));
 					return true;
 				}
-				// if they are the same add it at the end of the same elements
-				else if (((Comparable<E>) elem.object).compareTo(e) == 0
-						&& ((Comparable<E>) elem.object).compareTo(e) != 0)
-				{
-					elem.addAfter(new Element(e));
-					return true;
-				}
 				elem = elem.next;
 			}
 			
