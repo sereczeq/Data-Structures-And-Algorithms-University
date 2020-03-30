@@ -2,6 +2,7 @@ package lab4;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -93,24 +94,14 @@ class TwoWayCycledOrderedListWithSentinelTest
 		assertEquals(links.get(0), a);
 		assertEquals(links.get(1), b);
 		assertEquals(links.get(2), c);
-		try
+		assertThrows(NoSuchElementException.class, () ->
 		{
 			links.get(-1);
-			fail("should throw Exception");
-		}
-		catch (NoSuchElementException e)
-		{
-			
-		}
-		try
+		});
+		assertThrows(NoSuchElementException.class, () ->
 		{
 			links.get(4);
-			fail("should throw Exception");
-		}
-		catch (NoSuchElementException e)
-		{
-			
-		}
+		});
 		
 	}
 	

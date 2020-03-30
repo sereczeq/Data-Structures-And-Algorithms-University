@@ -81,12 +81,13 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		
 		
 		// assert it is NOT a sentinel
-		public void remove()
+		public E remove()
 		{
 			
 			if (object == null) throw new NoSuchElementException("can't remove sentinel / element with null object");
 			if (prev != null) prev.next = next;
 			if (next != null) next.prev = prev;
+			return object;
 			
 		}
 		
@@ -403,12 +404,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	{
 		
 		Element elem = sentinel.next;
-		for (int x = 0; x <= index && elem != sentinel; x++, elem = elem.next) if (x == index)
-		{
-			elem.next.prev = elem.prev;
-			elem.prev.next = elem.next;
-			return elem.object;
-		}
+		for (int x = 0; x <= index && elem != sentinel; x++, elem = elem.next) if (x == index) return elem.remove();
 		throw new NoSuchElementException();
 		
 	}
