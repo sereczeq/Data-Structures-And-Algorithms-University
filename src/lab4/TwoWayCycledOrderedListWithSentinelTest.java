@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -207,6 +208,24 @@ class TwoWayCycledOrderedListWithSentinelTest
 		// Does throw error when empty
 		links.clear();
 		links.removeAll(a);
+		
+	}
+	
+	
+	@Test
+	void testIterator()
+	{
+		
+		Iterator<Link> it = links.iterator();
+		assertFalse(it.hasNext());
+		links.add(a);
+		links.remove(a);
+		assertFalse(it.hasNext());
+		links.add(a);
+		int x = 0;
+		for (; it.hasNext() && x < 100; x++, it.next());
+		if (x == 100);
+		else fail("it isn't cycled");
 		
 	}
 	

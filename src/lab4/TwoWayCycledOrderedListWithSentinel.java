@@ -116,7 +116,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return curr.next != null;
+			return !isEmpty();
 			
 		}
 		
@@ -154,7 +154,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return curr.next != null;
+			return !isEmpty();
 			
 		}
 		
@@ -187,7 +187,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		public boolean hasPrevious()
 		{
 			
-			return curr.prev != null;
+			return !isEmpty();
 			
 		}
 		
@@ -247,7 +247,8 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public TwoWayCycledOrderedListWithSentinel()
 	{
 		
-		sentinel = new Element(null, sentinel, sentinel);
+		sentinel = new Element(null);
+		sentinel.prev = sentinel.next = sentinel;
 		
 	}
 	
@@ -268,11 +269,13 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 			Element elem = sentinel.next;
 			for (int x = 0; x < size(); x++)
 			{
+				// if e is smaller than elem put e before elem
 				if (((Comparable<E>) elem.object).compareTo(e) > 0)
 				{
 					elem.prev.addAfter(new Element(e));
 					return true;
 				}
+				// if they are the same add it at the end of the same elements
 				else if (((Comparable<E>) elem.object).compareTo(e) == 0
 						&& ((Comparable<E>) elem.object).compareTo(e) != 0)
 				{
@@ -283,6 +286,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 			}
 			
 		}
+		// default case
 		sentinel.prev.addAfter(new Element(e));
 		return true;
 		
@@ -292,15 +296,15 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	private Element getElement(int index)
 	{
 		
-		if (isEmpty()) throw new NoSuchElementException();
 		Element elem = sentinel.next;
-		for (int x = 0; elem.next != null && elem != sentinel && x <= index; x++, elem = elem.next)
-			if (x == index && elem != sentinel) return elem;
+		// I'm proud of this one, whole method done in one loop :')
+		for (int x = 0; elem != sentinel && x <= index; x++, elem = elem.next) if (x == index) return elem;
 		throw new NoSuchElementException();
 		
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private Element getElement(E obj)
 	{
 		
@@ -331,8 +335,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public boolean contains(E element)
 	{
 		
-		if (isEmpty()) return false;
-		for (Element elem = sentinel.next; elem.next != null && elem != sentinel; elem = elem.next)
+		for (Element elem = sentinel.next; elem != sentinel; elem = elem.next)
 			if (elem.object.equals(element)) return true;
 		return false;
 		
@@ -362,10 +365,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	{
 		
 		Iterator<E> it = iterator();
-		for (int x = 0; x < size(); x++)
-		{
-			if (it.next().equals(element)) return x;
-		}
+		for (int x = 0; x < size(); x++) if (it.next().equals(element)) return x;
 		return -1;
 		
 	}
@@ -375,7 +375,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public boolean isEmpty()
 	{
 		
-		return sentinel.next == null || sentinel.next == sentinel;
+		return sentinel.next == sentinel;
 		
 	}
 	
@@ -402,8 +402,8 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public E remove(int index)
 	{
 		
-		Element elem = sentinel;
-		for (int x = -1; elem.next != null && x <= index; x++, elem = elem.next) if (x == index && elem != sentinel)
+		Element elem = sentinel.next;
+		for (int x = 0; x <= index && elem != sentinel; x++, elem = elem.next) if (x == index)
 		{
 			elem.next.prev = elem.prev;
 			elem.prev.next = elem.next;
@@ -436,7 +436,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	{
 		
 		int x = 0;
-		for (Element elem = sentinel; elem.next != null && elem.next != sentinel; x++, elem = elem.next);
+		for (Element elem = sentinel.next; elem != sentinel; x++, elem = elem.next);
 		return x;
 		
 	}
@@ -446,30 +446,24 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public boolean equals(Object other)
 	{
 		
+		// I assumed everything (Link + weight) will have to be equal (not like with
+		// Link, where only ref matters)
 		return toString().contentEquals(other.toString());
 		
 	}
 	
 	
-	// @SuppressWarnings("unchecked")
 	public void add(TwoWayCycledOrderedListWithSentinel<E> other)
 	{
 		
-		if (equals(other)) return;
-		while (other.size() > 0) add(other.remove(0));
+		if (!equals(other)) while (other.size() > 0) add(other.remove(0));
 		
 	}
 	
 	
-	// @SuppressWarnings({ "unchecked", "rawtypes" })
 	public void removeAll(E e)
 	{
 		
-		// while (contains(e))
-		// {
-		// System.out.println("doing");
-		// remove(e);
-		// }
 		while (remove(e));
 		
 	}
@@ -481,10 +475,7 @@ class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		
 		String string = "";
 		Iterator<E> it = iterator();
-		for (int x = 0; x < size(); x++)
-		{
-			string += "\n" + it.next();
-		}
+		for (int x = 0; x < size(); x++) string += "\n" + it.next();
 		return string;
 		
 	}
@@ -519,8 +510,7 @@ class Link implements Comparable<Link>
 	public boolean equals(Object obj)
 	{
 		
-		if (obj instanceof Link) return ref.contentEquals(((Link) obj).ref);
-		return false;
+		return obj instanceof Link && ref.contentEquals(((Link) obj).ref);
 		
 	}
 	
@@ -549,9 +539,7 @@ class Document
 	
 	public String name;
 	public TwoWayCycledOrderedListWithSentinel<Link> link;
-	final static Pattern regex = Pattern
-			// .compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>(?<par>\\()(?<number>[0-9-]*)?\\))?");
-			.compile("(link=)(?<ref>[a-z][\\w_]*)(?<id>\\((?<number>[0-9-]*)\\))?$");
+	final static Pattern regex = Pattern.compile("(link=)(?<ref>[a-z][\\w_]*)(\\((?<number>[0-9-]*)\\))?$");
 	final static Pattern docName = Pattern.compile("^[a-z].*$");
 	
 	public Document(String name, Scanner scan)
@@ -580,8 +568,7 @@ class Document
 	static boolean isCorrectId(String id)
 	{
 		
-		Matcher matcher = docName.matcher(id.toLowerCase());
-		return matcher.find();
+		return docName.matcher(id.toLowerCase()).find();
 		
 	}
 	
