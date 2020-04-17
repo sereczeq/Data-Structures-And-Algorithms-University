@@ -495,6 +495,14 @@ class Link implements Comparable<Link>
 	}
 	
 	
+	public int getWeight()
+	{
+		
+		return weight;
+		
+	}
+	
+	
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -614,6 +622,103 @@ class Document
 		}
 		return retStr;
 		
+	}
+	
+	
+	public int[] getWeights()
+	{
+		
+		int[] array = new int[link.size()];
+		Iterator<Link> it = link.iterator();
+		for (int x = 0; x < link.size(); x++) array[x] = it.next().getWeight();
+		return array;
+		
+	}
+	
+	
+	public static void showArray(int[] arr)
+	{
+		
+		if (arr != null && arr.length > 0) System.out.print(arr[0]);
+		for (int x = 1; x < arr.length; x++) System.out.print(" " + arr[x]);
+		System.out.println();
+		
+	}
+	
+	
+	void bubbleSort(int[] arr)
+	{
+		
+		showArray(arr);
+		for (int begin = 0; begin < arr.length - 1; begin++)
+		{
+			for (int j = arr.length - 1; j > begin; j--) if (arr[j - 1] > arr[j]) swap(arr, j - 1, j);
+			showArray(arr);
+		}
+		
+	}
+	
+	
+	private void swap(int[] arr, int i, int j)
+	{
+		
+		int tmp = arr[i];
+		arr[i] = arr[j];
+		arr[j] = tmp;
+		
+	}
+	
+	
+	public void insertSort(int[] arr)
+	{
+		
+		showArray(arr);
+		for (int pos = arr.length - 2; pos >= 0; pos--)
+		{
+			int value = arr[pos];
+			int i = pos + 1;
+			while (i < arr.length && value > arr[i])
+			{
+				arr[i - 1] = arr[i];
+				i++;
+			}
+			arr[i - 1] = value;
+			showArray(arr);
+		}
+		
+	}
+	
+	
+	public void selectSort(int[] arr)
+	{
+		
+		showArray(arr);
+		for (int border = arr.length; border > 1; border--)
+		{
+			int maxPos = 0;
+			for (int pos = 0; pos < border; pos++) if (arr[maxPos] < arr[pos]) maxPos = pos;
+			swap(arr, border - 1, maxPos);
+			showArray(arr);
+		}
+		
+	}
+	
+	
+	public void iterativeMergeSort(int[] arr)
+	{
+		
+		showArray(arr);
+		
+		// TODO
+	}
+	
+	
+	public void radixSort(int[] arr)
+	{
+		
+		showArray(arr);
+		
+		// TODO
 	}
 	
 }
