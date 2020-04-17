@@ -708,8 +708,15 @@ class Document
 	{
 		
 		showArray(arr);
+		/*
+		 * Let's sort every two elements with each other, then every for elements, etc
+		 */
 		
-		// TODO
+		for (int subArraySize = 1, position = 0; subArraySize < arr.length; subArraySize *= 2)
+		{
+			if (arr[position] < arr[position + 1]) swap(arr, position, position + 1);
+		}
+		
 	}
 	
 	
