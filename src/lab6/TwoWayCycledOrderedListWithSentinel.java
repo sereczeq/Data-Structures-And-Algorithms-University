@@ -1,4 +1,4 @@
-package lab4;
+package lab6;
 
 import java.util.Iterator;
 import java.util.ListIterator;
