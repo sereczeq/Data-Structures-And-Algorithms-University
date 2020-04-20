@@ -49,8 +49,8 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	// public static void main(String[] args)
 	// {
 	//
-	// int[] arr = new int[] {20, 7, 10, 3, 8, 4, 1 };
-	// // Document.iterativeMergeSort(arr);
+	// int[] arr = new int[] {0, 23, 0, 934, 1, 213, 98 };
+	// Document.iterativeMergeSort(arr);
 	// Document.radixSort(arr);
 	//
 	// }
@@ -762,11 +762,12 @@ class Document
 	{
 		
 		showArray(arr);
+		for (int x : arr) if (x < 0) return;
 		int[] numArr = new int[arr.length];
 		for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] % 10;
 		arr = countSort(arr, numArr);
 		showArray(arr);
-		for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] / 10;
+		for (int x = 0; x < numArr.length; x++) numArr[x] = (arr[x] / 10) % 10;
 		arr = countSort(arr, numArr);
 		showArray(arr);
 		for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] / 100;
