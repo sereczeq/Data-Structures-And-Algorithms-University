@@ -49,9 +49,8 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public static void main(String[] args)
 	{
 		
-		System.out.println("start");
-		int array[] = new int[] {1, 3, 5, 2, 4 };
-		Document.iterativeMergeSort(array);
+		int[] arr = new int[] {1, 4, 2, 6, 8, 7, 4, 10 };
+		Document.iterativeMergeSort(arr);
 		
 	}
 	
@@ -717,131 +716,43 @@ class Document
 	{
 		
 		showArray(arr);
-		int[] array = new int[arr.length];
-		int newPos = 0;
-		int pos1 = 0;
-		int pos2 = 0;
-		int oldPos = 0;
-		int size = 0;
-		for (size = 1; size < arr.length / 2; size *= 2)
+		// Main loop dictating the size of sub-arrays
+		for (int size = 2; size < arr.length; size *= 2)
 		{
-			for (oldPos = 0; oldPos < arr.length - size; oldPos += size * 2)
+			// Loop for creating sub-arrays and merging them
+			for (int leftStart = 0; leftStart < arr.length; leftStart += 2 * size)
 			{
-				while (pos1 < size || pos2 < size)
-				{
-					if (arr[oldPos + pos1] < arr[oldPos + size + pos2] || pos2 == size)
-						array[newPos++] = arr[oldPos + pos1++];
-					else array[newPos++] = arr[oldPos + size + pos2++];
-				}
+				// Setting starting and ending points of new arrays
+				int leftEnd = (leftStart + size < arr.length ? leftStart + size : arr.length) - 1;
+				int rightEnd = (leftStart + 2 * size < arr.length ? leftStart + 2 * size : arr.length) - 1;
+				// Setting up new arrays
+				int[] arrL = new int[leftEnd - leftStart + 1];
+				int[] arrR = new int[rightEnd - leftEnd];
+				for (int x = 0; x < arrL.length; x++) arrL[x] = arr[leftStart + x];
+				for (int x = 0; x < arrR.length; x++) arrR[x] = arr[leftEnd + x + 1];
+				arr = mergeSort(arr, arrL, arrR, leftStart);
 			}
-			showArray(array);
+			showArray(arr);
 		}
 		
 	}
 	
 	
-	void mergeSort(int arr[], int n)
+	private static int[] mergeSort(int[] arr, int[] arrL, int[] arrR, int leftStart)
 	{
 		
-		// For current size of subarrays to
-		// be merged curr_size varies from
-		// 1 to n/2
-		int curr_size;
-		
-		// For picking starting index of
-		// left subarray to be merged
-		int left_start;
-		
-		// Merge subarrays in bottom up
-		// manner. First merge subarrays
-		// of size 1 to create sorted
-		// subarrays of size 2, then merge
-		// subarrays of size 2 to create
-		// sorted subarrays of size 4, and
-		// so on.
-		for (curr_size = 1; curr_size <= n - 1; curr_size = 2 * curr_size)
+		// MergeSorting arrays
+		int leftPos = 0;
+		int rightPos = 0;
+		while (leftPos < arrL.length && rightPos < arrR.length)
 		{
-			
-			// Pick starting point of different
-			// subarrays of current size
-			for (left_start = 0; left_start < n - 1; left_start += 2 * curr_size)
-			{
-				// Find ending point of left
-				// subarray. mid+1 is starting
-				// point of right
-				int mid = Math.min(left_start + curr_size - 1, n - 1);
-				
-				int right_end = Math.min(left_start + 2 * curr_size - 1, n - 1);
-				
-				// Merge Subarrays arr[left_start...mid]
-				// & arr[mid+1...right_end]
-				merge(arr, left_start, mid, right_end);
-			}
+			if (arrL[leftPos] < arrR[rightPos]) arr[leftStart++] = arrL[leftPos++];
+			else arr[leftStart++] = arrR[rightPos++];
 		}
-		
-	}
-	
-	
-	/*
-	 * Function to merge the two haves arr[l..m] and arr[m+1..r] of array arr[]
-	 */
-	static void merge(int arr[], int leftStart, int leftEnd, int rightEnd)
-	{
-		
-		int i, j, k;
-		int n1length = leftEnd - leftStart + 1;
-		int n2length = rightEnd - leftEnd;
-		
-		/* create temp arrays */
-		int L[] = new int[n1length];
-		int R[] = new int[n2length];
-		
-		/*
-		 * Copy data to temp arrays L[] and R[]
-		 */
-		for (i = 0; i < n1length; i++) L[i] = arr[leftStart + i];
-		for (j = 0; j < n2length; j++) R[j] = arr[leftEnd + 1 + j];
-		
-		/*
-		 * Merge the temp arrays back into arr[l..r]
-		 */
-		i = 0;
-		j = 0;
-		k = leftStart;
-		while (i < n1length && j < n2length)
-		{
-			if (L[i] <= R[j])
-			{
-				arr[k] = L[i];
-				i++;
-			}
-			else
-			{
-				arr[k] = R[j];
-				j++;
-			}
-			k++;
-		}
-		
-		/*
-		 * Copy the remaining elements of L[], if there are any
-		 */
-		while (i < n1length)
-		{
-			arr[k] = L[i];
-			i++;
-			k++;
-		}
-		
-		/*
-		 * Copy the remaining elements of R[], if there are any
-		 */
-		while (j < n2length)
-		{
-			arr[k] = R[j];
-			j++;
-			k++;
-		}
+		// Rewriting the rest
+		while (leftPos < arrL.length) arr[leftStart++] = arrL[leftPos++];
+		while (rightPos < arrR.length) arr[leftStart++] = arrR[rightPos++];
+		return arr;
 		
 	}
 	
