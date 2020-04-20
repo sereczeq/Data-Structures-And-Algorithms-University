@@ -762,14 +762,16 @@ class Document
 	{
 		
 		showArray(arr);
-		for (int x : arr) if (x < 0) return;
 		int[] numArr = new int[arr.length];
+		// for the last digit
 		for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] % 10;
 		arr = countSort(arr, numArr);
 		showArray(arr);
+		// for the middle digit
 		for (int x = 0; x < numArr.length; x++) numArr[x] = (arr[x] / 10) % 10;
 		arr = countSort(arr, numArr);
 		showArray(arr);
+		// for the first digit
 		for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] / 100;
 		arr = countSort(arr, numArr);
 		showArray(arr);
