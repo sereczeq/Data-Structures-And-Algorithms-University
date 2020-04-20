@@ -46,14 +46,14 @@ interface IList<E> extends Iterable<E>
 public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 {
 	
-	public static void main(String[] args)
-	{
-		
-		int[] arr = new int[] {20, 7, 10, 3, 8, 4, 1 };
-		// Document.iterativeMergeSort(arr);
-		Document.radixSort(arr);
-		
-	}
+	// public static void main(String[] args)
+	// {
+	//
+	// int[] arr = new int[] {20, 7, 10, 3, 8, 4, 1 };
+	// // Document.iterativeMergeSort(arr);
+	// Document.radixSort(arr);
+	//
+	// }
 	
 	private class Element
 	{
@@ -545,7 +545,7 @@ class Document
 	
 	public String name;
 	public TwoWayCycledOrderedListWithSentinel<Link> link;
-	final static Pattern regex = Pattern.compile("(link=)(?<ref>[a-z][\\w_]*)(\\((?<number>[0-9-]*)\\))?$");
+	final static Pattern regex = Pattern.compile("(link=)(?<ref>[a-z]([\\w_]*)?)(\\((?<number>[0-9-]*)\\))?$");
 	final static Pattern docName = Pattern.compile("^[a-z].*$");
 	
 	public Document(String name, Scanner scan)
