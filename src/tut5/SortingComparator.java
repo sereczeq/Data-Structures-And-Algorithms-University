@@ -7,7 +7,7 @@ public class SortingComparator
 	
 	private int comparisons = 0;
 	private int shifts = 0;
-	private String[][] table = new String[8][10];
+	private String[][] table = new String[8][13];
 	
 	public SortingComparator()
 	{
@@ -20,19 +20,22 @@ public class SortingComparator
 	private void test(int[]... arrays)
 	{
 		
-		for (int[] arr : arrays)
+		int x = 2;
+		for (int[] array : arrays)
 		{
+			int[] arr = new int[array.length];
+			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
 			long start = System.currentTimeMillis();
 			bubbleSort(arr);
 			long finish = System.currentTimeMillis();
-			int x = 0;
-			while (table[x][1] != null) x++;
 			table[x][1] = "" + comparisons;
 			table[x][2] = "" + shifts;
 			table[x][3] = "" + (finish - start);
 			comparisons = 0;
 			shifts = 0;
 			
+			arr = new int[array.length];
+			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
 			start = System.currentTimeMillis();
 			insertSort(arr);
 			finish = System.currentTimeMillis();
@@ -42,6 +45,8 @@ public class SortingComparator
 			comparisons = 0;
 			shifts = 0;
 			
+			arr = new int[array.length];
+			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
 			start = System.currentTimeMillis();
 			selectSort(arr);
 			finish = System.currentTimeMillis();
@@ -50,7 +55,20 @@ public class SortingComparator
 			table[x][9] = "" + (finish - start);
 			comparisons = 0;
 			shifts = 0;
+			
+			arr = new int[array.length];
+			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
+			start = System.currentTimeMillis();
+			iterativeMergeSort(arr);
+			finish = System.currentTimeMillis();
+			table[x][10] = "" + comparisons;
+			table[x][11] = "" + shifts;
+			table[x][12] = "" + (finish - start);
+			comparisons = 0;
+			shifts = 0;
+			x++;
 		}
+		
 		showTable();
 		
 	}
@@ -59,9 +77,9 @@ public class SortingComparator
 	private void fillTable()
 	{
 		
-		table[0] = new String[] {" ", "bubble", "insert", "select" };
+		table[0] = new String[] {" ", "bubble", "insert", "select", "merge" };
 		table[1] = new String[] {" ", "compares", "shifts", "time", "compares", "shifts", "time", "compares", "shifts",
-				"time" };
+				"time", "compares", "shifts", "time" };
 		table[2][0] = "sorted";
 		table[3][0] = "almost sorted";
 		table[4][0] = "inverted";
@@ -75,11 +93,46 @@ public class SortingComparator
 	private void showTable()
 	{
 		
-		System.out.format("%20s%25s%35s%35s\n", table[0]);
+		System.out.format("%20s%25s%35s%35s%35s\n", table[0]);
 		for (int x = 1; x < table.length; x++)
 		{
-			System.out.format("%20s%15s%10s%10s%15s%10s%10s%15s%10s%10s\n", table[x]);
+			System.out.format("%20s%15s%10s%10s%15s%10s%10s%15s%10s%10s%15s%10s%10s\n", table[x]);
 		}
+		
+	}
+	
+	
+	public static int[][] newArrays(int size)
+	{
+		
+		int[] sortedArr = new int[size];
+		int[] almostSortedArr = new int[size];
+		int[] invertedArr = new int[size];
+		int[] almostInvertedArr = new int[size];
+		int[] randomArr = new int[size];
+		int[] randomArr2 = new int[size];
+		Random rand = new Random();
+		for (int x = 0; x < size; x++)
+		{
+			sortedArr[x] = x;
+			invertedArr[size - x - 1] = x;
+			randomArr[x] = rand.nextInt(size);
+			randomArr2[x] = rand.nextInt(size);
+		}
+		for (int x = 0; x < size; x++)
+		{
+			almostSortedArr[x] = sortedArr[x];
+			almostInvertedArr[x] = invertedArr[x];
+		}
+		for (int x = size / 100; x > 0; x--)
+		{
+			almostSortedArr[rand.nextInt(size)] = rand.nextInt(size);
+			almostInvertedArr[rand.nextInt(size)] = rand.nextInt(size);
+		}
+		int[][] returnArr = {sortedArr, almostSortedArr, invertedArr, almostInvertedArr, randomArr, randomArr2 };
+		for (int[] arr : returnArr) showArray(arr);
+		System.out.println("\n");
+		return returnArr;
 		
 	}
 	
@@ -117,9 +170,10 @@ public class SortingComparator
 	}
 	
 	
-	void bubbleSort(int[] arr)
+	void bubbleSort(int[] array)
 	{
 		
+		int[] arr = array;
 		for (int begin = 0; begin < arr.length - 1; begin++)
 		{
 			for (int j = arr.length - 1; j > begin; j--) if (compare(arr[j - 1], arr[j])) swap(arr, j - 1, j);
@@ -129,9 +183,10 @@ public class SortingComparator
 	}
 	
 	
-	public void insertSort(int[] arr)
+	public void insertSort(int[] array)
 	{
 		
+		int[] arr = array;
 		for (int pos = arr.length - 2; pos >= 0; pos--)
 		{
 			int value = arr[pos];
@@ -145,14 +200,15 @@ public class SortingComparator
 			shifts++;
 			arr[i - 1] = value;
 		}
-		showArray(arr);
+		// showArray(arr);
 		
 	}
 	
 	
-	public void selectSort(int[] arr)
+	public void selectSort(int[] array)
 	{
 		
+		int[] arr = array;
 		for (int border = arr.length; border > 1; border--)
 		{
 			int maxPos = 0;
@@ -164,6 +220,54 @@ public class SortingComparator
 	}
 	
 	
+	public void iterativeMergeSort(int[] array)
+	{
+		
+		int[] arr = array;
+		// showArray(arr);
+		// Main loop dictating the size of sub-arrays
+		for (int size = 1; size < arr.length; size *= 2)
+		{
+			// Loop for creating sub-arrays and merging them
+			for (int leftStart = 0; leftStart < arr.length; leftStart += 2 * size)
+			{
+				// Setting starting and ending points of new arrays
+				int leftEnd = (leftStart + size < arr.length ? leftStart + size : arr.length) - 1;
+				int rightEnd = (leftStart + 2 * size < arr.length ? leftStart + 2 * size : arr.length) - 1;
+				// Setting up new arrays
+				int[] arrL = new int[leftEnd - leftStart + 1];
+				int[] arrR = new int[rightEnd - leftEnd];
+				for (int x = 0; x < arrL.length; x++) arrL[x] = arr[leftStart + x];
+				for (int x = 0; x < arrR.length; x++) arrR[x] = arr[leftEnd + x + 1];
+				arr = mergeSort(arr, arrL, arrR, leftStart);
+				shifts++;
+			}
+			// showArray(arr);
+		}
+		
+	}
+	
+	
+	private int[] mergeSort(int[] arr, int[] arrL, int[] arrR, int leftStart)
+	{
+		
+		// MergeSorting arrays
+		int leftPos = 0;
+		int rightPos = 0;
+		while (leftPos < arrL.length && rightPos < arrR.length)
+		{
+			comparisons++;
+			if (arrL[leftPos] < arrR[rightPos]) arr[leftStart++] = arrL[leftPos++];
+			else arr[leftStart++] = arrR[rightPos++];
+		}
+		// Rewriting the rest
+		while (leftPos < arrL.length) arr[leftStart++] = arrL[leftPos++];
+		while (rightPos < arrR.length) arr[leftStart++] = arrR[rightPos++];
+		return arr;
+		
+	}
+	
+	
 	public static void main(String[] args)
 	{
 		
@@ -171,39 +275,13 @@ public class SortingComparator
 		 * Program counts under assumptions that: Comparing is an action of comparing
 		 * two elements of array (not checking array size inside of loops), Shifting is
 		 * an action of changing data inside array (not integer values that are outside
-		 * of an array)
+		 * of an array) Time is measured in miliseconds for easier comparison of the
+		 * results
 		 */
+		int size = 10000;
 		
-		// int[] sortedArr = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-		// int[] almostSortedArr = {1, 3, 2, 4, 10, 6, 7, 8, 9, 5 };
-		// int[] invertedArr = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
-		// int[] almostInvertedArr = {10, 9, 1, 7, 6, 5, 4, 3, 2, 8 };
-		// int[] randomArr = {10, 3, 5, 2, 7, 1, 4, 8, 9 };
-		// int[] randomArr2 = {1, 10, 2, 9, 3, 8, 4, 7, 5, 6 };
-		int[] sortedArr = new int[10000];
-		int[] almostSortedArr = new int[10000];
-		int[] invertedArr = new int[10000];
-		int[] almostInvertedArr = new int[10000];
-		int[] randomArr = new int[10000];
-		int[] randomArr2 = new int[10000];
-		Random rand = new Random();
-		for (int x = 0; x < 10000; x++)
-		{
-			sortedArr[x] = x;
-			invertedArr[10000 - x - 1] = x;
-			randomArr[x] = rand.nextInt(10000);
-			randomArr2[x] = rand.nextInt(10000);
-		}
-		almostSortedArr = sortedArr;
-		almostSortedArr[rand.nextInt(10000)] = rand.nextInt(10000);
-		almostSortedArr[rand.nextInt(10000)] = rand.nextInt(10000);
-		almostSortedArr[rand.nextInt(10000)] = rand.nextInt(10000);
-		almostInvertedArr = invertedArr;
-		almostInvertedArr[rand.nextInt(10000)] = rand.nextInt(10000);
-		almostInvertedArr[rand.nextInt(10000)] = rand.nextInt(10000);
-		almostInvertedArr[rand.nextInt(10000)] = rand.nextInt(10000);
 		SortingComparator comp = new SortingComparator();
-		comp.test(sortedArr, almostSortedArr, invertedArr, almostInvertedArr, randomArr, randomArr2);
+		comp.test(newArrays(size));
 		
 	}
 	
