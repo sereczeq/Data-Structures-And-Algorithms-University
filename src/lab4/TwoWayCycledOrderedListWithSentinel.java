@@ -445,7 +445,24 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void add(TwoWayCycledOrderedListWithSentinel<E> other)
 	{
 		
-		if (!equals(other)) while (other.size() > 0) add(other.remove(0));
+		if (equals(other) || other.isEmpty()) return;
+		if (isEmpty())
+		{
+			sentinel = other.sentinel;
+			return;
+		}
+		Element otherElem = other.sentinel.next;
+		for (Element elem = sentinel.next; otherElem != other.sentinel; elem = elem.next)
+		{
+			if (((Comparable<E>) elem.object).compareTo(otherElem.object) > 0 || elem.next == sentinel)
+			{
+				Element temp = otherElem.next;
+				elem.prev.addAfter(otherElem);
+				otherElem = temp;
+				elem = elem.prev;
+			}
+		}
+		other.clear();
 		
 	}
 	
@@ -453,7 +470,7 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void removeAll(E e)
 	{
 		
-		while (remove(e));
+		for (Element elem = sentinel.next; elem != sentinel; elem = elem.next) if (elem.object == e) elem.remove();
 		
 	}
 	
