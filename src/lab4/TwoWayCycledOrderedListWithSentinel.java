@@ -476,10 +476,18 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void removeAll(E e)
 	{
 		
-		// Program now goes through all elements until it finds first match, then
-		// removes elements until there is none left
-		for (Element elem = sentinel.next; elem != sentinel; elem = elem.next) if (elem.object.equals(e)) elem.remove();
-		else return;
+		/*
+		 * Program now goes through all elements until it finds first match, then
+		 * removes elements taking advantage of the fact that they are next to each
+		 * other. Once there is
+		 */
+		boolean removed = false;
+		for (Element elem = sentinel.next; elem != sentinel; elem = elem.next) if (elem.object.equals(e))
+		{
+			elem.remove();
+			removed = true;
+		}
+		else if (removed) return;
 		
 	}
 	
