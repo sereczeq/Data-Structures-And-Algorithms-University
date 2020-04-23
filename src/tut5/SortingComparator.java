@@ -253,6 +253,7 @@ public class SortingComparator
 		
 		// MergeSorting arrays
 		int leftPos = 0;
+		
 		int rightPos = 0;
 		while (leftPos < arrL.length && rightPos < arrR.length)
 		{
