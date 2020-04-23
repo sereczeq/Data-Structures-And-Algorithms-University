@@ -479,7 +479,7 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 		/*
 		 * Program now goes through all elements until it finds first match, then
 		 * removes elements taking advantage of the fact that they are next to each
-		 * other. Once there is
+		 * other. Once there is no more elements to remove program breaks the loop
 		 */
 		boolean removed = false;
 		for (Element elem = sentinel.next; elem != sentinel; elem = elem.next) if (elem.object.equals(e))
