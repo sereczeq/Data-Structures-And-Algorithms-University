@@ -444,6 +444,12 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	
 	public void add(TwoWayCycledOrderedListWithSentinel<E> other)
 	{
+		/*
+		 * Program now takes advantage of the fact that both lists are sorted. It
+		 * searches for element of THIS list that is bigger than element of OTHER list
+		 * and puts it in front of it. If THIS list finishes before OTHER list does,
+		 * elements of other list are all added
+		 */
 		
 		if (equals(other) || other.isEmpty()) return;
 		if (isEmpty())
@@ -470,7 +476,10 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	public void removeAll(E e)
 	{
 		
-		for (Element elem = sentinel.next; elem != sentinel; elem = elem.next) if (elem.object == e) elem.remove();
+		// Program now goes through all elements until it finds first match, then
+		// removes elements until there is none left
+		for (Element elem = sentinel.next; elem != sentinel; elem = elem.next) if (elem.object.equals(e)) elem.remove();
+		else return;
 		
 	}
 	
