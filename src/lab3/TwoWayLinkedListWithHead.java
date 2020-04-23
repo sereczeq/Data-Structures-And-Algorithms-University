@@ -68,8 +68,8 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		
 	}
 	
-	Element head = new Element(null);
-	Element tail = new Element(null);
+	Element head = null;
+	Element tail = null;
 	// can be realization with the field size or without
 	int size;
 	
@@ -91,7 +91,7 @@ class TwoWayLinkedListWithHead<E> implements IList<E>
 		public boolean hasNext()
 		{
 			
-			return pos.next.object != null;
+			return pos != null || pos.next.object != null;
 			
 		}
 		
