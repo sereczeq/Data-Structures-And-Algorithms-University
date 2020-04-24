@@ -50,7 +50,7 @@ public class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 	// {
 	//
 	// int[] arr = new int[] {0, 23, 0, 934, 1, 213, 98 };
-	// Document.iterativeMergeSort(arr);
+	// // Document.iterativeMergeSort(arr);
 	// Document.radixSort(arr);
 	//
 	// }
@@ -757,57 +757,39 @@ class Document
 		
 	}
 	
-	// public static void radixSort(int[] arr)
-	// {
-	//
-	// showArray(arr);
-	// int[] numArr = new int[arr.length];
-	// // for the last digit
-	// for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] % 10;
-	// arr = countSort(arr, numArr);
-	// showArray(arr);
-	// // for the middle digit
-	// for (int x = 0; x < numArr.length; x++) numArr[x] = (arr[x] / 10) % 10;
-	// arr = countSort(arr, numArr);
-	// showArray(arr);
-	// // for the first digit
-	// for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] / 100;
-	// arr = countSort(arr, numArr);
-	// showArray(arr);
-	//
-	// }
-	//
-	//
-	// public static int[] countSort(int[] arr, int[] numArr)
-	// {
-	//
-	// int[] count = new int[10];
-	// for (int x : numArr) count[x]++;
-	// int[] sortedArr = new int[arr.length];
-	// for (int countPos = 0, sortedArrPos = 0; sortedArrPos < sortedArr.length;)
-	// {
-	// if (count[countPos] > 0)
-	// {
-	// sortedArr[sortedArrPos++] = countPos;
-	// count[countPos]--;
-	// }
-	// else countPos++;
-	// }
-	// int[] newArr = new int[numArr.length];
-	// int newArrPos = 0;
-	// for (int x : sortedArr)
-	// {
-	// for (int y = 0; y < numArr.length; y++)
-	// {
-	// if (numArr[y] == x)
-	// {
-	// newArr[newArrPos++] = arr[y];
-	// numArr[y] = -1;
-	// }
-	// }
-	// }
-	// return newArr;
-	//
-	// }
+	
+	public static void radixSort(int[] arr)
+	{
+		
+		showArray(arr);
+		// numArr is an array containing the significant digit of corresponding number
+		int[] numArr = new int[arr.length];
+		// for the last digit
+		for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] % 10;
+		arr = countSort(arr, numArr);
+		showArray(arr);
+		// for the middle digit
+		for (int x = 0; x < numArr.length; x++) numArr[x] = (arr[x] / 10) % 10;
+		arr = countSort(arr, numArr);
+		showArray(arr);
+		// for the first digit
+		for (int x = 0; x < numArr.length; x++) numArr[x] = arr[x] / 100;
+		arr = countSort(arr, numArr);
+		showArray(arr);
+		
+	}
+	
+	
+	public static int[] countSort(int[] arr, int[] numArr)
+	{
+		
+		int[] count = new int[10];
+		for (int x : numArr) count[x]++;
+		for (int x = 1; x < 10; x++) count[x] += count[x - 1];
+		int[] newArr = new int[numArr.length];
+		for (int x = arr.length - 1; x >= 0; x--) newArr[count[numArr[x]]-- - 1] = arr[x];
+		return newArr;
+		
+	}
 	
 }
