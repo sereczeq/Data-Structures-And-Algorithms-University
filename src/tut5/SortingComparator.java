@@ -25,9 +25,9 @@ public class SortingComparator
 		{
 			int[] arr = new int[array.length];
 			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
-			long start = System.currentTimeMillis();
+			long start = System.nanoTime();
 			bubbleSort(arr);
-			long finish = System.currentTimeMillis();
+			long finish = System.nanoTime();
 			table[x][1] = "" + comparisons;
 			table[x][2] = "" + shifts;
 			table[x][3] = "" + (finish - start);
@@ -36,9 +36,9 @@ public class SortingComparator
 			
 			arr = new int[array.length];
 			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
-			start = System.currentTimeMillis();
+			start = System.nanoTime();
 			insertSort(arr);
-			finish = System.currentTimeMillis();
+			finish = System.nanoTime();
 			table[x][4] = "" + comparisons;
 			table[x][5] = "" + shifts;
 			table[x][6] = "" + (finish - start);
@@ -47,9 +47,9 @@ public class SortingComparator
 			
 			arr = new int[array.length];
 			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
-			start = System.currentTimeMillis();
+			start = System.nanoTime();
 			selectSort(arr);
-			finish = System.currentTimeMillis();
+			finish = System.nanoTime();
 			table[x][7] = "" + comparisons;
 			table[x][8] = "" + shifts;
 			table[x][9] = "" + (finish - start);
@@ -58,9 +58,9 @@ public class SortingComparator
 			
 			arr = new int[array.length];
 			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
-			start = System.currentTimeMillis();
+			start = System.nanoTime();
 			iterativeMergeSort(arr);
-			finish = System.currentTimeMillis();
+			finish = System.nanoTime();
 			table[x][10] = "" + comparisons;
 			table[x][11] = "" + shifts;
 			table[x][12] = "" + (finish - start);
@@ -90,6 +90,7 @@ public class SortingComparator
 	}
 	
 	
+	@SuppressWarnings("all") // Because format function was throwing warning that I didn't know how to fix
 	private void showTable()
 	{
 		
@@ -102,7 +103,7 @@ public class SortingComparator
 	}
 	
 	
-	public static int[][] newArrays(int size)
+	public int[][] newArrays(int size, boolean showArrays)
 	{
 		
 		int[] sortedArr = new int[size];
@@ -124,19 +125,21 @@ public class SortingComparator
 			almostSortedArr[x] = sortedArr[x];
 			almostInvertedArr[x] = invertedArr[x];
 		}
-		for (int x = size / 100; x > 0; x--)
+		
+		for (int x = size / 100 + 1; x > 0; x--) // plus one so it's done at least once
 		{
 			almostSortedArr[rand.nextInt(size)] = rand.nextInt(size);
 			almostInvertedArr[rand.nextInt(size)] = rand.nextInt(size);
 		}
 		int[][] returnArr = {sortedArr, almostSortedArr, invertedArr, almostInvertedArr, randomArr, randomArr2 };
-		for (int[] arr : returnArr) showArray(arr);
+		if (showArrays) for (int[] arr : returnArr) showArray(arr);
 		System.out.println("\n");
 		return returnArr;
 		
 	}
 	
 	
+	// Compare and swap methods include counting the operations
 	private void swap(int[] arr, int i, int j)
 	{
 		
@@ -200,7 +203,6 @@ public class SortingComparator
 			shifts++;
 			arr[i - 1] = value;
 		}
-		// showArray(arr);
 		
 	}
 	
@@ -224,7 +226,6 @@ public class SortingComparator
 	{
 		
 		int[] arr = array;
-		// showArray(arr);
 		// Main loop dictating the size of sub-arrays
 		for (int size = 1; size < arr.length; size *= 2)
 		{
@@ -242,7 +243,6 @@ public class SortingComparator
 				arr = mergeSort(arr, arrL, arrR, leftStart);
 				shifts++;
 			}
-			// showArray(arr);
 		}
 		
 	}
@@ -253,7 +253,6 @@ public class SortingComparator
 		
 		// MergeSorting arrays
 		int leftPos = 0;
-		
 		int rightPos = 0;
 		while (leftPos < arrL.length && rightPos < arrR.length)
 		{
@@ -276,13 +275,14 @@ public class SortingComparator
 		 * Program counts under assumptions that: Comparing is an action of comparing
 		 * two elements of array (not checking array size inside of loops), Shifting is
 		 * an action of changing data inside array (not integer values that are outside
-		 * of an array) Time is measured in miliseconds for easier comparison of the
+		 * of an array) Time is measured in nano seconds for easier comparison of the
 		 * results
 		 */
-		int size = 10000;
+		int size = 1000;
+		boolean showArrays = false; // Not recommended for big arrays
 		
 		SortingComparator comp = new SortingComparator();
-		comp.test(newArrays(size));
+		comp.test(comp.newArrays(size, showArrays));
 		
 	}
 	
