@@ -110,7 +110,7 @@ class HashTable<E>
 	public int hash(Object elem)
 	{
 		
-		char[] name = null;// elem.toString().toCharArray();
+		char[] name = elem.toString().toCharArray();
 		if (elem instanceof Document) name = ((Document) elem).getName().toCharArray();
 		double key = 1;
 		int x = 0;
@@ -135,7 +135,7 @@ class HashTable<E>
 		LinkedList[] tempArr = arr;
 		arr = new LinkedList[size];
 		for (int x = 0; x < size; x++) arr[x] = new LinkedList<E>();
-		for (Object obj : tempArr) add(obj);
+		for (LinkedList x : tempArr) for (Object obj : x) add(obj);
 		
 	}
 	
@@ -144,9 +144,16 @@ class HashTable<E>
 	public String toString()
 	{
 		
-		// TODO
-		// use IWithName x=(IWithName)elem;
-		return null;
+		String string = "";
+		for (int x = 0; x < size; x++)
+		{
+			string += x + ":";
+			Iterator it = arr[x].iterator();
+			if (it.hasNext()) string += " " + ((Document) it.next()).getName();
+			while (it.hasNext()) string += ", " + ((Document) it.next()).getName();
+			string += "\n";
+		}
+		return string;
 		
 	}
 	
@@ -154,8 +161,9 @@ class HashTable<E>
 	public Object get(Object toFind)
 	{
 		
-		if (arr[hash(toFind)].contains(toFind)) return toFind;
-		else return null;
+		int key = hash(toFind);
+		for (Object x : arr[key]) if (x.equals(toFind)) return x;
+		return null;
 		
 	}
 	
