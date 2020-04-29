@@ -149,8 +149,11 @@ class HashTable<E>
 		{
 			string += x + ":";
 			Iterator it = arr[x].iterator();
-			if (it.hasNext()) string += " " + ((Document) it.next()).getName();
-			while (it.hasNext()) string += ", " + ((Document) it.next()).getName();
+			if (it.hasNext())
+			{
+				string += " " + ((Document) it.next()).getName();
+				while (it.hasNext()) string += ", " + ((Document) it.next()).getName();
+			}
 			string += "\n";
 		}
 		return string;
@@ -755,7 +758,7 @@ class Document
 	public boolean equals(Object other)
 	{
 		
-		return other instanceof Document && name == ((Document) other).name;
+		return other instanceof Document && name.contentEquals(((Document) other).name);
 		
 	}
 	
