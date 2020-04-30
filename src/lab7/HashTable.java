@@ -97,33 +97,12 @@ class HashTable<E>
 	public boolean add(Object elem)
 	{
 		
-		int key = hash(elem);
+		int key = elem.hashCode() % size;
 		if (arr[key].contains(elem)) return false;
 		arr[key].add(elem);
 		elemAmount++;
-		if (elemAmount > size * maxLoadFactor) doubleArray();
+		if (elemAmount > (float) size * maxLoadFactor) doubleArray();
 		return true;
-		
-	}
-	
-	
-	public int hash(Object elem)
-	{
-		
-		char[] name = elem.toString().toCharArray();
-		if (elem instanceof Document) name = ((Document) elem).getName().toCharArray();
-		double key = 1;
-		int x = 0;
-		for (char letter : name)
-		{
-			key *= Character.getNumericValue(letter) * multValues[x] + addValues[x++];
-			if (key <= 0)
-			{
-				System.out.println("sad");
-			}
-			if (x == 30) x = 0;
-		}
-		return (int) key % size;
 		
 	}
 	
@@ -132,6 +111,7 @@ class HashTable<E>
 	{
 		
 		size *= 2;
+		elemAmount = 0;
 		LinkedList[] tempArr = arr;
 		arr = new LinkedList[size];
 		for (int x = 0; x < size; x++) arr[x] = new LinkedList<E>();
@@ -164,7 +144,7 @@ class HashTable<E>
 	public Object get(Object toFind)
 	{
 		
-		int key = hash(toFind);
+		int key = toFind.hashCode() % size;
 		for (Object x : arr[key]) if (x.equals(toFind)) return x;
 		return null;
 		
@@ -174,15 +154,6 @@ class HashTable<E>
 
 class TwoWayCycledOrderedListWithSentinel<E> implements IList<E>
 {
-	
-	// public static void main(String[] args)
-	// {
-	//
-	// int[] arr = new int[] {0, 23, 0, 934, 1, 213, 98 };
-	// // Document.iterativeMergeSort(arr);
-	// Document.radixSort(arr);
-	//
-	// }
 	
 	private class Element
 	{
@@ -759,6 +730,28 @@ class Document
 	{
 		
 		return other instanceof Document && name.contentEquals(((Document) other).name);
+		
+	}
+	
+	
+	@Override
+	public int hashCode()
+	{
+		
+		int[] multValues = {7, 11, 13, 17, 19 };
+		char[] name = this.name.toCharArray();
+		double key = 0;
+		for (int x = 0, n = 0; x < name.length; x++)
+		{
+			if (x < name.length - 1)
+			{
+				if (x == 1)
+					key = Character.getNumericValue(name[x]) * multValues[n++] + Character.getNumericValue(name[++x]);
+				else key = key * multValues[n++] + Character.getNumericValue(name[++x]);
+				if (n == multValues.length) n = 0;
+			}
+		}
+		return (int) key;
 		
 	}
 	
