@@ -60,6 +60,7 @@ public class SortingComparator
 			for (int i = 0; i < arr.length; i++) arr[i] = array[i];
 			start = System.nanoTime();
 			iterativeMergeSort(arr);
+			showArray(arr);
 			finish = System.nanoTime();
 			table[x][10] = "" + comparisons;
 			table[x][11] = "" + shifts;
@@ -278,7 +279,7 @@ public class SortingComparator
 		 * of an array) Time is measured in nano seconds for easier comparison of the
 		 * results
 		 */
-		int size = 1000;
+		int size = 18;
 		boolean showArrays = false; // Not recommended for big arrays
 		
 		SortingComparator comp = new SortingComparator();
