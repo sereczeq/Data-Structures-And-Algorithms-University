@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,8 +55,6 @@ class HashTable<E>
 	private int size;
 	private int elemAmount;
 	private final double maxLoadFactor;
-	private int[] multValues = new int[30];
-	private int[] addValues = new int[30];
 	
 	public HashTable()
 	{
@@ -83,12 +80,6 @@ class HashTable<E>
 		this.size = initCapacity;
 		this.arr = new LinkedList[size];
 		for (int x = 0; x < size; x++) arr[x] = new LinkedList<E>();
-		Random rand = new Random();
-		for (int x = 0; x < 30; x++)
-		{
-			multValues[x] = rand.nextInt(10) + 2;
-			addValues[x] = rand.nextInt(10) + 2;
-		}
 		
 	}
 	
@@ -97,7 +88,7 @@ class HashTable<E>
 	public boolean add(Object elem)
 	{
 		
-		int key = elem.hashCode() % size;
+		int key = hash(elem.hashCode());
 		if (arr[key].contains(elem)) return false;
 		arr[key].add(elem);
 		elemAmount++;
@@ -144,9 +135,18 @@ class HashTable<E>
 	public Object get(Object toFind)
 	{
 		
-		int key = toFind.hashCode() % size;
+		int key = hash(toFind.hashCode());
 		for (Object x : arr[key]) if (x.equals(toFind)) return x;
 		return null;
+		
+	}
+	
+	
+	private int hash(int key)
+	{
+		
+		// return ((key / 100) * 6 + key) % size;
+		return key % size;
 		
 	}
 	
@@ -741,15 +741,11 @@ class Document
 		int[] multValues = {7, 11, 13, 17, 19 };
 		char[] name = this.name.toCharArray();
 		double key = 0;
-		for (int x = 0, n = 0; x < name.length; x++)
+		if (name.length >= 1) key = (int) name[0];
+		for (int x = 1, n = 0; x < name.length; x++, n++)
 		{
-			if (x < name.length - 1)
-			{
-				if (x == 1)
-					key = Character.getNumericValue(name[x]) * multValues[n++] + Character.getNumericValue(name[++x]);
-				else key = key * multValues[n++] + Character.getNumericValue(name[++x]);
-				if (n == multValues.length) n = 0;
-			}
+			key *= multValues[n % 5];
+			key += (int) name[x];
 		}
 		return (int) key;
 		
