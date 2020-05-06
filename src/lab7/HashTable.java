@@ -1,5 +1,6 @@
 package lab7;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -83,12 +84,26 @@ class HashTable<E>
 		
 	}
 	
+	// @SuppressWarnings("unchecked")
+	// public boolean add(Object elem)
+	// {
+	//
+	// int key = hash(elem.hashCode());
+	// if (arr[key].contains(elem)) return false;
+	// arr[key].add(elem);
+	// elemAmount++;
+	// if (elemAmount > (float) size * maxLoadFactor) doubleArray();
+	// return true;
+	//
+	// }
 	
-	@SuppressWarnings("unchecked")
+	
 	public boolean add(Object elem)
 	{
 		
-		int key = hash(elem.hashCode());
+		Document doc = (Document) elem;
+		BigInteger bigKey = doc.hashCodeBig();
+		int key = bigKey.mod(BigInteger.valueOf(size)).intValue();
 		if (arr[key].contains(elem)) return false;
 		arr[key].add(elem);
 		elemAmount++;
@@ -131,11 +146,22 @@ class HashTable<E>
 		
 	}
 	
+	// public Object get(Object toFind)
+	// {
+	//
+	// int key = hash(toFind.hashCode());
+	// for (Object x : arr[key]) if (x.equals(toFind)) return x;
+	// return null;
+	//
+	// }
+	
 	
 	public Object get(Object toFind)
 	{
 		
-		int key = hash(toFind.hashCode());
+		Document doc = (Document) toFind;
+		BigInteger bigKey = doc.hashCodeBig();
+		int key = bigKey.mod(BigInteger.valueOf(size)).intValue();
 		for (Object x : arr[key]) if (x.equals(toFind)) return x;
 		return null;
 		
@@ -748,6 +774,23 @@ class Document
 			key += (int) name[x];
 		}
 		return (int) key;
+		
+	}
+	
+	
+	public BigInteger hashCodeBig()
+	{
+		
+		int[] multValues = {7, 11, 13, 17, 19 };
+		char[] name = this.name.toCharArray();
+		BigInteger key = BigInteger.ZERO;
+		if (name.length >= 1) key = BigInteger.valueOf((int) name[0]);
+		for (int x = 1, n = 0; x < name.length; x++, n++)
+		{
+			key = key.multiply(BigInteger.valueOf(multValues[n % 5]));
+			key = key.add(BigInteger.valueOf((int) name[x]));
+		}
+		return key;
 		
 	}
 	
