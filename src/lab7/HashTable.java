@@ -854,6 +854,27 @@ class Document
 	}
 	
 	
+	void a(int[] arr)
+	{
+		
+		int begining = 0;
+		while (begining < arr.length - 1)
+		{
+			begining++;
+			int num = arr.length;
+			while (num > begining)
+			{
+				num--;
+				if (arr[num - 1] > arr[num])
+				{
+					swap(arr, num - 1, num);
+				}
+			}
+		}
+		
+	}
+	
+	
 	private static void swap(int[] arr, int i, int j)
 	{
 		

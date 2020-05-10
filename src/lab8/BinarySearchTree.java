@@ -1,6 +1,7 @@
 package lab8;
 
 import java.math.BigInteger;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -47,26 +48,39 @@ interface IList<E> extends Iterable<E>
 	
 }
 
-class BinarySearchTree<T>
+interface IExecutor<T, R>
 {
 	
-	public static void main(String[] arts)
-	{
-		
-		BinarySearchTree bst = new BinarySearchTree();
-		bst.add(5);
-		bst.add(2);
-		bst.add(3);
-		bst.add(7);
-		System.out.println(bst.toStringInOrder());
-		
-	}
+	void execute(T elem);
+	
+	R getResult();
+	
+}
+
+public class BinarySearchTree<T>
+{
+	
+	// public static void main(String[] arts)
+	// {
+	//
+	// BinarySearchTree bst = new BinarySearchTree();
+	// bst.add(7);
+	// bst.add(5);
+	// bst.add(3);
+	// bst.add(10);
+	// bst.add(8);
+	// bst.add(12);
+	// System.out.println(bst.toStringInOrder());
+	// System.out.println(bst.toStringPostOrder());
+	// System.out.println(bst.toStringPreOrder());
+	//
+	// }
 	
 	private class Node
 	{
 		
 		T value;
-		Node left, right, parent;
+		Node left = null, right = null, parent = null;
 		
 		public Node(T v)
 		{
@@ -88,45 +102,160 @@ class BinarySearchTree<T>
 		}
 		
 		
-		private void makeLeft(Node left)
+		@Override
+		public String toString()
 		{
 			
-			this.left = left;
-			left.parent = this;
-			
-		}
-		
-		
-		private void makeRight(Node right)
-		{
-			
-			this.right = right;
-			right.parent = this;
+			String string = "";
+			string += value.toString();
+			// string += "value = " + value;
+			// string += ", parent=" + (parent != null ? parent.value : "null");
+			// string += ", right=" + (right != null ? right.value : "null");
+			// string += ", left=" + (left != null ? left.value : "null");
+			return string;
 			
 		}
 		
 	}
 	
-	private Node root = null;
+	private Comparator<T> comparator = null;
+	private Node root;
 	
 	public BinarySearchTree()
 	{
+		
+		root = null;
+		
+	}
+	
+	
+	public BinarySearchTree(Comparator<T> comp)
+	{
+		
+		comparator = comp;
+		root = null;
+		
+	}
+	
+	
+	public T getElement(T toFind)
+	{
+		
+		return getElement(root, toFind);
 		
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	public T getElement(T toFind)
+	private T getElement(Node start, T toFind)
 	{
 		
-		Node node = root;
-		while (node != null)
+		// TODO
+		Comparable toFindComparable = (Comparable) toFind;
+		if (start == null)
 		{
-			if (((Comparable<T>) toFind).compareTo(node.value) > 0) node = node.right;
-			else if (((Comparable<T>) toFind).compareTo(node.value) < 0) node = node.left;
-			else return node.value;
+			return null;
 		}
-		return null;
+		
+		if (toFindComparable.compareTo(toFind) == 0)
+		{
+			return start.value;
+		}
+		else if (toFindComparable.compareTo(start.value) < 0)
+		{
+			// searched value is smaller - look in the left subtree
+			return getElement(start.left, toFind);
+		}
+		else
+		{
+			// searched value is larger - look in the right subtree
+			return getElement(start.right, toFind);
+		}
+		
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	private Node findNode(Node start, T toFind)
+	{
+		
+		// TODO
+		Comparable toFindComparable = (Comparable) toFind;
+		if (start == null)
+		{
+			return null;
+		}
+		
+		if (toFindComparable.compareTo(start.value) == 0)
+		{
+			return start;
+		}
+		else if (toFindComparable.compareTo(start.value) < 0)
+		{
+			// searched value is smaller - look in the left subtree
+			return findNode(start.left, toFind);
+		}
+		else
+		{
+			// searched value is larger - look in the right subtree
+			return findNode(start.right, toFind);
+		}
+		
+	}
+	
+	
+	private T getMinimum(Node startNode)
+	{
+		
+		if (root == null)
+		{
+			throw new NoSuchElementException();
+		}
+		
+		return getMinimumNode(startNode).value;
+		
+	}
+	
+	
+	private Node getMinimumNode(Node startNode)
+	{
+		
+		Node currentNode = startNode;
+		
+		while (currentNode.left != null)
+		{
+			currentNode = currentNode.left;
+		}
+		
+		return currentNode;
+		
+	}
+	
+	
+	private T getMaximum(Node startNode)
+	{
+		
+		if (root == null)
+		{
+			throw new NoSuchElementException();
+		}
+		
+		return getMaximumNode(startNode).value;
+		
+	}
+	
+	
+	private Node getMaximumNode(Node startNode)
+	{
+		
+		Node currentNode = startNode;
+		
+		while (currentNode.right != null)
+		{
+			currentNode = currentNode.right;
+		}
+		
+		return currentNode;
 		
 	}
 	
@@ -134,46 +263,42 @@ class BinarySearchTree<T>
 	public T successor(T elem)
 	{
 		
-		Node node = valueToNode(elem);
-		if (node.right == null)
+		Node successor = findNode(root, elem);
+		
+		if (successor.right != null)
 		{
-			Node temp = root;
-			while (temp.right != null) temp = temp.right;
-			return temp.value;
+			return getMinimum(successor.right);
 		}
 		
-		while (node.parent != null)
+		Node currNode = successor.parent;
+		while (currNode != null && successor == currNode.right)
 		{
-			Node parent = node.parent;
-			if (parent.right == node) return parent.value;
-			node = parent;
+			successor = currNode;
+			currNode = currNode.parent;
 		}
-		// TODO: which one
-		return null;
-		// return node.value;
+		
+		return currNode.value;
 		
 	}
 	
 	
-	private Node successor(Node node)
+	public <R> void inOrderWalk(IExecutor<T, R> exec)
 	{
 		
-		if (node.right == null)
-		{
-			Node temp = root;
-			while (temp.right != null) temp = temp.right;
-			return temp;
-		}
+		inOrderWalk(root, exec);
 		
-		while (node.parent != null)
+	}
+	
+	
+	private <R> void inOrderWalk(Node node, IExecutor<T, R> exec)
+	{
+		
+		if (node != null)
 		{
-			Node parent = node.parent;
-			if (parent.right == node) return parent;
-			node = parent;
+			inOrderWalk(node.left, exec);
+			exec.execute(node.value);
+			inOrderWalk(node.right, exec);
 		}
-		// TODO: which one
-		return null;
-		// return node;
 		
 	}
 	
@@ -181,22 +306,43 @@ class BinarySearchTree<T>
 	public String toStringInOrder()
 	{
 		
-		String string = "";
-		Node node = root;
-		return string + toStringInOrder(root);
+		String string = inOrder(root);
+		string = string.substring(0, string.length() - 2);
+		return string;
 		
 	}
 	
 	
-	public String toStringInOrder(Node node)
+	private String inOrder(Node node)
 	{
 		
 		String string = "";
 		if (node == null) return string;
-		string += toStringInOrder(node.left);
-		string += node.value.toString();
-		string += toStringInOrder(node.right);
+		string += inOrder(node.left);
+		string += node.toString() + ", ";
+		string += inOrder(node.right);
 		return string;
+		
+	}
+	
+	
+	public <R> void preOrderWalk(IExecutor<T, R> exec)
+	{
+		
+		preOrderWalk(root, exec);
+		
+	}
+	
+	
+	private <R> void preOrderWalk(Node node, IExecutor<T, R> exec)
+	{
+		
+		if (node != null)
+		{
+			exec.execute(node.value);
+			preOrderWalk(node.left, exec);
+			preOrderWalk(node.right, exec);
+		}
 		
 	}
 	
@@ -204,8 +350,43 @@ class BinarySearchTree<T>
 	public String toStringPreOrder()
 	{
 		
-		// TODO
-		return null;
+		String string = preOrder(root);
+		string = string.substring(0, string.length() - 2);
+		return string;
+		
+	}
+	
+	
+	private String preOrder(Node node)
+	{
+		
+		String string = "";
+		if (node == null) return string;
+		string += node.toString() + ", ";
+		string += preOrder(node.left);
+		string += preOrder(node.right);
+		return string;
+		
+	}
+	
+	
+	public <R> void postOrderWalk(IExecutor<T, R> exec)
+	{
+		
+		postOrderWalk(root, exec);
+		
+	}
+	
+	
+	private <R> void postOrderWalk(Node node, IExecutor<T, R> exec)
+	{
+		
+		if (node != null)
+		{
+			postOrderWalk(node.left, exec);
+			postOrderWalk(node.right, exec);
+			exec.execute(node.value);
+		}
 		
 	}
 	
@@ -213,30 +394,73 @@ class BinarySearchTree<T>
 	public String toStringPostOrder()
 	{
 		
-		// TODO
-		return null;
+		String string = postOrder(root);
+		string = string.substring(0, string.length() - 2);
+		return string;
+		
+	}
+	
+	
+	private String postOrder(Node node)
+	{
+		
+		String string = "";
+		if (node == null) return string;
+		string += postOrder(node.left);
+		string += postOrder(node.right);
+		string += node.toString() + ", ";
+		return string;
+		
+	}
+	
+	
+	public boolean add(T elem)
+	{
+		
+		return add(root, elem);
 		
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	public boolean add(T elem)
+	private boolean add(Node startNode, T elem)
 	{
+		// todo return false if already exists
 		
-		if (root == null)
+		Node currNode = null;
+		Node root = startNode;
+		Node newNode = new Node(elem);
+		
+		while (root != null)
 		{
-			root = new Node(elem);
+			currNode = root;
+			if (((Comparable) newNode.value).compareTo(root.value) < 0)
+			{
+				root = root.left;
+			}
+			else
+			{
+				root = root.right;
+			}
+		}
+		
+		newNode.parent = currNode;
+		if (currNode == null)
+		{
+			this.root = newNode;
 			return true;
 		}
-		Node node = root;
-		while (node != null)
+		else if (((Comparable) newNode.value).compareTo(currNode.value) < 0)
 		{
-			if (((Comparable<T>) elem).compareTo(node.value) > 0) node = node.right;
-			else if (((Comparable<T>) elem).compareTo(node.value) < 0) node = node.right;
-			else return false;
+			// todo make sure it's correct
+			currNode.left = newNode;
+			return true;
 		}
-		node = new Node(elem);
-		return true;
+		else
+		{
+			currNode.right = newNode;
+			return true;
+		}
 		
 	}
 	
@@ -244,19 +468,34 @@ class BinarySearchTree<T>
 	public T remove(T value)
 	{
 		
-		Node node = valueToNode(value);
-		if (node.left != null)
+		Node toDelete = findNode(root, value);
+		if (toDelete == null) return null;
+		T temp = toDelete.value;
+		// case 1 - no children
+		if (toDelete.left == null && toDelete.right == null)
 		{
-			if (node.right != null)
-			{
-				node.value = successor(value);
-				remove(successor(value));
-			}
-			else node.parent.makeLeft(node.left);
+			if (toDelete.parent.left == toDelete) toDelete.parent.left = null;
+			else toDelete.parent.right = null;
 		}
-		else if (node.right != null) node.parent.makeRight(node.right);
-		else node = null;
-		return value;
+		// case 2 - has one child
+		else if (toDelete.left != null && toDelete.right == null)
+		{
+			if (toDelete.parent.left == toDelete) toDelete.parent.left = toDelete.left;
+			else toDelete.parent.right = toDelete.left;
+		}
+		else if (toDelete.right != null && toDelete.left == null)
+		{
+			if (toDelete.parent.left == toDelete) toDelete.parent.left = toDelete.right;
+			else toDelete.parent.right = toDelete.right;
+		}
+		// case 3 - has two children
+		else
+		{
+			Node succesor = findNode(root, successor(toDelete.value));
+			remove(succesor.value);
+			toDelete.value = succesor.value;
+		}
+		return temp;
 		
 	}
 	
@@ -264,7 +503,7 @@ class BinarySearchTree<T>
 	public void clear()
 	{
 		
-		root = new Node(null);
+		root = null;
 		
 	}
 	
@@ -272,23 +511,19 @@ class BinarySearchTree<T>
 	public int size()
 	{
 		
-		// TODO
-		return 0;
+		return size(root);
 		
 	}
 	
 	
-	private Node valueToNode(T value)
+	private int size(Node start)
 	{
 		
-		Node node = root;
-		while (node != null)
-		{
-			if (((Comparable<T>) value).compareTo(node.value) > 0) node = node.right;
-			else if (((Comparable<T>) value).compareTo(node.value) < 0) node = node.right;
-			else return node;
-		}
-		return null;
+		if (start == null) return 0;
+		int x = 1;
+		x += size(start.left);
+		x += size(start.right);
+		return x;
 		
 	}
 	
