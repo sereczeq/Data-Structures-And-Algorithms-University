@@ -1,5 +1,6 @@
 package lab8;
 
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -46,114 +47,20 @@ interface IList<E> extends Iterable<E>
 	
 }
 
-class HashTable<E>
-{
-	
-	LinkedList arr[]; // use pure array
-	private final static int defaultInitSize = 8;
-	private final static double defaultMaxLoadFactor = 0.7;
-	private int size;
-	private int elemAmount;
-	private final double maxLoadFactor;
-	
-	public HashTable()
-	{
-		
-		this(defaultInitSize);
-		
-	}
-	
-	
-	public HashTable(int size)
-	{
-		
-		this(size, defaultMaxLoadFactor);
-		
-	}
-	
-	
-	public HashTable(int initCapacity, double maxLF)
-	{
-		
-		// TODO
-		this.maxLoadFactor = maxLF;
-		this.size = initCapacity;
-		this.arr = new LinkedList[size];
-		for (int x = 0; x < size; x++) arr[x] = new LinkedList<E>();
-		
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	public boolean add(Object elem)
-	{
-		
-		int key = hash(elem.hashCode());
-		if (arr[key].contains(elem)) return false;
-		arr[key].add(elem);
-		elemAmount++;
-		if (elemAmount > (float) size * maxLoadFactor) doubleArray();
-		return true;
-		
-	}
-	
-	
-	private void doubleArray()
-	{
-		
-		size *= 2;
-		elemAmount = 0;
-		LinkedList[] tempArr = arr;
-		arr = new LinkedList[size];
-		for (int x = 0; x < size; x++) arr[x] = new LinkedList<E>();
-		for (LinkedList x : tempArr) for (Object obj : x) add(obj);
-		
-	}
-	
-	
-	@Override
-	public String toString()
-	{
-		
-		String string = "";
-		for (int x = 0; x < size; x++)
-		{
-			string += x + ":";
-			Iterator it = arr[x].iterator();
-			if (it.hasNext())
-			{
-				string += " " + ((Document) it.next()).getName();
-				while (it.hasNext()) string += ", " + ((Document) it.next()).getName();
-			}
-			string += "\n";
-		}
-		return string;
-		
-	}
-	
-	
-	public Object get(Object toFind)
-	{
-		
-		int key = hash(toFind.hashCode());
-		for (Object x : arr[key]) if (x.equals(toFind)) return x;
-		return null;
-		
-	}
-	
-	
-	private int hash(int key)
-	{
-		
-		// return ((key / 100) * 6 + key) % size;
-		return key % size;
-		
-	}
-	
-}
-
 class BinarySearchTree<T>
 {
+	
+	public static void main(String[] arts)
+	{
+		
+		BinarySearchTree bst = new BinarySearchTree();
+		bst.add(5);
+		bst.add(2);
+		bst.add(3);
+		bst.add(7);
+		System.out.println(bst.toStringInOrder());
+		
+	}
 	
 	private class Node
 	{
@@ -180,6 +87,24 @@ class BinarySearchTree<T>
 			
 		}
 		
+		
+		private void makeLeft(Node left)
+		{
+			
+			this.left = left;
+			left.parent = this;
+			
+		}
+		
+		
+		private void makeRight(Node right)
+		{
+			
+			this.right = right;
+			right.parent = this;
+			
+		}
+		
 	}
 	
 	private Node root = null;
@@ -190,10 +115,17 @@ class BinarySearchTree<T>
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public T getElement(T toFind)
 	{
 		
-		// TODO
+		Node node = root;
+		while (node != null)
+		{
+			if (((Comparable<T>) toFind).compareTo(node.value) > 0) node = node.right;
+			else if (((Comparable<T>) toFind).compareTo(node.value) < 0) node = node.left;
+			else return node.value;
+		}
 		return null;
 		
 	}
@@ -202,8 +134,46 @@ class BinarySearchTree<T>
 	public T successor(T elem)
 	{
 		
-		// TODO
+		Node node = valueToNode(elem);
+		if (node.right == null)
+		{
+			Node temp = root;
+			while (temp.right != null) temp = temp.right;
+			return temp.value;
+		}
+		
+		while (node.parent != null)
+		{
+			Node parent = node.parent;
+			if (parent.right == node) return parent.value;
+			node = parent;
+		}
+		// TODO: which one
 		return null;
+		// return node.value;
+		
+	}
+	
+	
+	private Node successor(Node node)
+	{
+		
+		if (node.right == null)
+		{
+			Node temp = root;
+			while (temp.right != null) temp = temp.right;
+			return temp;
+		}
+		
+		while (node.parent != null)
+		{
+			Node parent = node.parent;
+			if (parent.right == node) return parent;
+			node = parent;
+		}
+		// TODO: which one
+		return null;
+		// return node;
 		
 	}
 	
@@ -211,8 +181,22 @@ class BinarySearchTree<T>
 	public String toStringInOrder()
 	{
 		
-		// TODO
-		return null;
+		String string = "";
+		Node node = root;
+		return string + toStringInOrder(root);
+		
+	}
+	
+	
+	public String toStringInOrder(Node node)
+	{
+		
+		String string = "";
+		if (node == null) return string;
+		string += toStringInOrder(node.left);
+		string += node.value.toString();
+		string += toStringInOrder(node.right);
+		return string;
 		
 	}
 	
@@ -260,8 +244,19 @@ class BinarySearchTree<T>
 	public T remove(T value)
 	{
 		
-		// TODO
-		return null;
+		Node node = valueToNode(value);
+		if (node.left != null)
+		{
+			if (node.right != null)
+			{
+				node.value = successor(value);
+				remove(successor(value));
+			}
+			else node.parent.makeLeft(node.left);
+		}
+		else if (node.right != null) node.parent.makeRight(node.right);
+		else node = null;
+		return value;
 		
 	}
 	
@@ -269,7 +264,8 @@ class BinarySearchTree<T>
 	public void clear()
 	{
 		
-		// TODO
+		root = new Node(null);
+		
 	}
 	
 	
@@ -278,6 +274,130 @@ class BinarySearchTree<T>
 		
 		// TODO
 		return 0;
+		
+	}
+	
+	
+	private Node valueToNode(T value)
+	{
+		
+		Node node = root;
+		while (node != null)
+		{
+			if (((Comparable<T>) value).compareTo(node.value) > 0) node = node.right;
+			else if (((Comparable<T>) value).compareTo(node.value) < 0) node = node.right;
+			else return node;
+		}
+		return null;
+		
+	}
+	
+}
+
+class HashTable<E>
+{
+	
+	LinkedList<E> arr[]; // use pure array
+	private final static int defaultInitSize = 8;
+	private final static double defaultMaxLoadFactor = 0.7;
+	private int size;
+	private int elemAmount;
+	private final double maxLoadFactor;
+	
+	public HashTable()
+	{
+		
+		this(defaultInitSize);
+		
+	}
+	
+	
+	public HashTable(int size)
+	{
+		
+		this(size, defaultMaxLoadFactor);
+		
+	}
+	
+	
+	public HashTable(int initCapacity, double maxLF)
+	{
+		
+		// TODO
+		this.maxLoadFactor = maxLF;
+		this.size = initCapacity;
+		this.arr = new LinkedList[size];
+		for (int x = 0; x < size; x++) arr[x] = new LinkedList<E>();
+		
+	}
+	
+	
+	public boolean add(Object elem)
+	{
+		
+		Document doc = (Document) elem;
+		BigInteger bigKey = doc.hashCodeBig();
+		int key = bigKey.mod(BigInteger.valueOf(size)).intValue();
+		if (arr[key].contains(elem)) return false;
+		arr[key].add((E) elem);
+		elemAmount++;
+		if (elemAmount > (float) size * maxLoadFactor) doubleArray();
+		return true;
+		
+	}
+	
+	
+	private void doubleArray()
+	{
+		
+		size *= 2;
+		elemAmount = 0;
+		LinkedList[] tempArr = arr;
+		arr = new LinkedList[size];
+		for (int x = 0; x < size; x++) arr[x] = new LinkedList<E>();
+		for (LinkedList x : tempArr) for (Object obj : x) add(obj);
+		
+	}
+	
+	
+	@Override
+	public String toString()
+	{
+		
+		String string = "";
+		for (int x = 0; x < size; x++)
+		{
+			string += x + ":";
+			Iterator it = arr[x].iterator();
+			if (it.hasNext())
+			{
+				string += " " + ((Document) it.next()).getName();
+				while (it.hasNext()) string += ", " + ((Document) it.next()).getName();
+			}
+			string += "\n";
+		}
+		return string;
+		
+	}
+	
+	
+	public Object get(Object toFind)
+	{
+		
+		Document doc = (Document) toFind;
+		BigInteger bigKey = doc.hashCodeBig();
+		int key = bigKey.mod(BigInteger.valueOf(size)).intValue();
+		for (Object x : arr[key]) if (x.equals(toFind)) return x;
+		return null;
+		
+	}
+	
+	
+	private int hash(int key)
+	{
+		
+		// return ((key / 100) * 6 + key) % size;
+		return key % size;
 		
 	}
 	
@@ -450,6 +570,23 @@ class Document
 			key += (int) name[x];
 		}
 		return (int) key;
+		
+	}
+	
+	
+	public BigInteger hashCodeBig()
+	{
+		
+		int[] multValues = {7, 11, 13, 17, 19 };
+		char[] name = this.name.toCharArray();
+		BigInteger key = BigInteger.ZERO;
+		if (name.length >= 1) key = BigInteger.valueOf((int) name[0]);
+		for (int x = 1, n = 0; x < name.length; x++, n++)
+		{
+			key = key.multiply(BigInteger.valueOf(multValues[n % 5]));
+			key = key.add(BigInteger.valueOf((int) name[x]));
+		}
+		return key;
 		
 	}
 	
