@@ -471,6 +471,14 @@ public class BinarySearchTree<T>
 		Node toDelete = findNode(root, value);
 		if (toDelete == null) return null;
 		T temp = toDelete.value;
+		// toDelete is root
+		if (toDelete == root)
+		{
+			if (size() == 1) clear();
+			else if (toDelete.parent.left == toDelete) toDelete.parent.left = null;
+			else toDelete.parent.right = null;
+		}
+		
 		// case 1 - no children
 		if (toDelete.left == null && toDelete.right == null)
 		{
