@@ -43,32 +43,23 @@ interface IList<E> extends Iterable<E>
 	
 }
 
-interface IExecutor<T, R>
-{
-	
-	void execute(T elem);
-	
-	R getResult();
-	
-}
-
 public class BinarySearchTree<T>
 {
 	
-	public static void main(String[] arts)
-	{
-		
-		BinarySearchTree bst = new BinarySearchTree();
-		System.out.println(bst.add(7));
-		System.out.println(bst.add(7));
-		bst.add(2);
-		System.out.println(bst.add(7));
-		bst.remove(1);
-		System.out.println(bst.toStringInOrder());
-		System.out.println(bst.toStringPostOrder());
-		System.out.println(bst.toStringPreOrder());
-		
-	}
+	// public static void main(String[] arts)
+	// {
+	//
+	// BinarySearchTree bst = new BinarySearchTree();
+	// System.out.println(bst.add(7));
+	// System.out.println(bst.add(7));
+	// bst.add(2);
+	// System.out.println(bst.add(7));
+	// bst.remove(1);
+	// System.out.println(bst.toStringInOrder());
+	// System.out.println(bst.toStringPostOrder());
+	// System.out.println(bst.toStringPreOrder());
+	//
+	// }
 	
 	private class Node
 	{
@@ -276,27 +267,6 @@ public class BinarySearchTree<T>
 	}
 	
 	
-	public <R> void inOrderWalk(IExecutor<T, R> exec)
-	{
-		
-		inOrderWalk(root, exec);
-		
-	}
-	
-	
-	private <R> void inOrderWalk(Node node, IExecutor<T, R> exec)
-	{
-		
-		if (node != null)
-		{
-			inOrderWalk(node.left, exec);
-			exec.execute(node.value);
-			inOrderWalk(node.right, exec);
-		}
-		
-	}
-	
-	
 	public String toStringInOrder()
 	{
 		
@@ -320,27 +290,6 @@ public class BinarySearchTree<T>
 	}
 	
 	
-	public <R> void preOrderWalk(IExecutor<T, R> exec)
-	{
-		
-		preOrderWalk(root, exec);
-		
-	}
-	
-	
-	private <R> void preOrderWalk(Node node, IExecutor<T, R> exec)
-	{
-		
-		if (node != null)
-		{
-			exec.execute(node.value);
-			preOrderWalk(node.left, exec);
-			preOrderWalk(node.right, exec);
-		}
-		
-	}
-	
-	
 	public String toStringPreOrder()
 	{
 		
@@ -360,27 +309,6 @@ public class BinarySearchTree<T>
 		string += preOrder(node.left);
 		string += preOrder(node.right);
 		return string;
-		
-	}
-	
-	
-	public <R> void postOrderWalk(IExecutor<T, R> exec)
-	{
-		
-		postOrderWalk(root, exec);
-		
-	}
-	
-	
-	private <R> void postOrderWalk(Node node, IExecutor<T, R> exec)
-	{
-		
-		if (node != null)
-		{
-			postOrderWalk(node.left, exec);
-			postOrderWalk(node.right, exec);
-			exec.execute(node.value);
-		}
 		
 	}
 	
