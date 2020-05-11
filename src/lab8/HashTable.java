@@ -46,7 +46,7 @@ class HashTable<E>
 	{
 		
 		Document doc = (Document) elem;
-		BigInteger bigKey = doc.hashCodeBig();
+		BigInteger bigKey = doc.hashCodeBigInt();
 		int key = bigKey.mod(BigInteger.valueOf(size)).intValue();
 		if (arr[key].contains(elem)) return false;
 		arr[key].add((E) elem);
@@ -95,7 +95,7 @@ class HashTable<E>
 	{
 		
 		Document doc = (Document) toFind;
-		BigInteger bigKey = doc.hashCodeBig();
+		BigInteger bigKey = doc.hashCodeBigInt();
 		int key = bigKey.mod(BigInteger.valueOf(size)).intValue();
 		for (Object x : arr[key]) if (x.equals(toFind)) return x;
 		return null;

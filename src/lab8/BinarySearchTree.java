@@ -55,23 +55,21 @@ interface IExecutor<T, R>
 public class BinarySearchTree<T>
 {
 	
-	// public static void main(String[] arts)
-	// {
-	//
-	// BinarySearchTree bst = new BinarySearchTree();
-	// // bst.add(7);
-	// // bst.add(5);
-	// // bst.add(3);
-	// // bst.add(10);
-	// // bst.add(8);
-	// // bst.add(12);
-	// bst.remove(1);
-	// System.out.println(bst.toStringInOrder());
-	// System.out.println(bst.toStringPostOrder());
-	// System.out.println(bst.toStringPreOrder());
-	//
-	// }
-	//
+	public static void main(String[] arts)
+	{
+		
+		BinarySearchTree bst = new BinarySearchTree();
+		System.out.println(bst.add(7));
+		System.out.println(bst.add(7));
+		bst.add(2);
+		System.out.println(bst.add(7));
+		bst.remove(1);
+		System.out.println(bst.toStringInOrder());
+		System.out.println(bst.toStringPostOrder());
+		System.out.println(bst.toStringPreOrder());
+		
+	}
+	
 	private class Node
 	{
 		
@@ -434,10 +432,11 @@ public class BinarySearchTree<T>
 			{
 				root = root.left;
 			}
-			else
+			else if (((Comparable) newNode.value).compareTo(root.value) > 0)
 			{
 				root = root.right;
 			}
+			else return false;
 		}
 		
 		newNode.parent = currNode;
@@ -452,11 +451,12 @@ public class BinarySearchTree<T>
 			currNode.left = newNode;
 			return true;
 		}
-		else
+		else if (((Comparable) newNode.value).compareTo(currNode.value) > 0)
 		{
 			currNode.right = newNode;
 			return true;
 		}
+		else return false;
 		
 	}
 	
