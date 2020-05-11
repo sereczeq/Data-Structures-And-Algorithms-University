@@ -124,27 +124,14 @@ public class BinarySearchTree<T>
 	private T getElement(Node start, T toFind)
 	{
 		
-		// TODO
-		Comparable toFindComparable = (Comparable) toFind;
-		if (start == null)
-		{
-			return null;
-		}
+		Comparable<T> toFindComparable = (Comparable<T>) toFind;
+		if (start == null) return null;
 		
-		if (toFindComparable.compareTo(toFind) == 0)
-		{
-			return start.value;
-		}
-		else if (toFindComparable.compareTo(start.value) < 0)
-		{
-			// searched value is smaller - look in the left subtree
-			return getElement(start.left, toFind);
-		}
-		else
-		{
-			// searched value is larger - look in the right subtree
-			return getElement(start.right, toFind);
-		}
+		if (toFindComparable.compareTo(toFind) == 0) return start.value;
+		// searched value is smaller - look in the left subtree
+		if (toFindComparable.compareTo(start.value) < 0) return getElement(start.left, toFind);
+		// searched value is larger - look in the right subtree
+		return getElement(start.right, toFind);
 		
 	}
 	
@@ -153,27 +140,14 @@ public class BinarySearchTree<T>
 	private Node findNode(Node start, T toFind)
 	{
 		
-		// TODO
-		Comparable toFindComparable = (Comparable) toFind;
-		if (start == null)
-		{
-			return null;
-		}
+		Comparable<T> toFindComparable = (Comparable<T>) toFind;
+		if (start == null) return null;
 		
-		if (toFindComparable.compareTo(start.value) == 0)
-		{
-			return start;
-		}
-		else if (toFindComparable.compareTo(start.value) < 0)
-		{
-			// searched value is smaller - look in the left subtree
-			return findNode(start.left, toFind);
-		}
-		else
-		{
-			// searched value is larger - look in the right subtree
-			return findNode(start.right, toFind);
-		}
+		if (toFindComparable.compareTo(start.value) == 0) return start;
+		// searched value is smaller - look in the left subtree
+		if (toFindComparable.compareTo(start.value) < 0) return findNode(start.left, toFind);
+		// searched value is larger - look in the right subtree
+		return findNode(start.right, toFind);
 		
 	}
 	
@@ -181,10 +155,7 @@ public class BinarySearchTree<T>
 	private T getMinimum(Node startNode)
 	{
 		
-		if (root == null)
-		{
-			throw new NoSuchElementException();
-		}
+		if (root == null) throw new NoSuchElementException();
 		
 		return getMinimumNode(startNode).value;
 		
@@ -195,12 +166,7 @@ public class BinarySearchTree<T>
 	{
 		
 		Node currentNode = startNode;
-		
-		while (currentNode.left != null)
-		{
-			currentNode = currentNode.left;
-		}
-		
+		for (; currentNode.left != null; currentNode = currentNode.left);
 		return currentNode;
 		
 	}
@@ -209,10 +175,7 @@ public class BinarySearchTree<T>
 	private T getMaximum(Node startNode)
 	{
 		
-		if (root == null)
-		{
-			throw new NoSuchElementException();
-		}
+		if (root == null) throw new NoSuchElementException();
 		
 		return getMaximumNode(startNode).value;
 		
@@ -223,12 +186,7 @@ public class BinarySearchTree<T>
 	{
 		
 		Node currentNode = startNode;
-		
-		while (currentNode.right != null)
-		{
-			currentNode = currentNode.right;
-		}
-		
+		for (; currentNode.right != null; currentNode = currentNode.right);
 		return currentNode;
 		
 	}
@@ -239,10 +197,7 @@ public class BinarySearchTree<T>
 		
 		Node successor = findNode(root, elem);
 		
-		if (successor.right != null)
-		{
-			return getMinimum(successor.right);
-		}
+		if (successor.right != null) return getMinimum(successor.right);
 		
 		Node currNode = successor.parent;
 		while (currNode != null && successor == currNode.right)
@@ -259,10 +214,7 @@ public class BinarySearchTree<T>
 	public String toStringInOrder()
 	{
 		
-		String string = inOrder(root);
-		if (string.length() < 2) return string;
-		string = string.substring(0, string.length() - 2);
-		return string;
+		return removeComma(inOrder(root));
 		
 	}
 	
@@ -283,10 +235,7 @@ public class BinarySearchTree<T>
 	public String toStringPreOrder()
 	{
 		
-		String string = preOrder(root);
-		if (string.length() < 2) return string;
-		string = string.substring(0, string.length() - 2);
-		return string;
+		return removeComma(preOrder(root));
 		
 	}
 	
@@ -307,10 +256,7 @@ public class BinarySearchTree<T>
 	public String toStringPostOrder()
 	{
 		
-		String string = postOrder(root);
-		if (string.length() < 2) return string;
-		string = string.substring(0, string.length() - 2);
-		return string;
+		return removeComma(postOrder(root));
 		
 	}
 	
@@ -328,6 +274,15 @@ public class BinarySearchTree<T>
 	}
 	
 	
+	private String removeComma(String string)
+	{
+		
+		if (string.length() < 2) return string;
+		return string.substring(0, string.length() - 2);
+		
+	}
+	
+	
 	public boolean add(T elem)
 	{
 		
@@ -339,7 +294,6 @@ public class BinarySearchTree<T>
 	@SuppressWarnings("unchecked")
 	private boolean add(Node startNode, T elem)
 	{
-		// todo return false if already exists
 		
 		Node currNode = null;
 		Node root = startNode;
@@ -348,35 +302,17 @@ public class BinarySearchTree<T>
 		while (root != null)
 		{
 			currNode = root;
-			if (((Comparable) newNode.value).compareTo(root.value) < 0)
-			{
-				root = root.left;
-			}
-			else if (((Comparable) newNode.value).compareTo(root.value) > 0)
-			{
-				root = root.right;
-			}
+			if (((Comparable<T>) newNode.value).compareTo(root.value) < 0) root = root.left;
+			else if (((Comparable<T>) newNode.value).compareTo(root.value) > 0) root = root.right;
 			else return false;
 		}
 		
 		newNode.parent = currNode;
-		if (currNode == null)
-		{
-			this.root = newNode;
-			return true;
-		}
-		else if (((Comparable) newNode.value).compareTo(currNode.value) < 0)
-		{
-			// todo make sure it's correct
-			currNode.left = newNode;
-			return true;
-		}
-		else if (((Comparable) newNode.value).compareTo(currNode.value) > 0)
-		{
-			currNode.right = newNode;
-			return true;
-		}
+		if (currNode == null) this.root = newNode;
+		else if (((Comparable) newNode.value).compareTo(currNode.value) < 0) currNode.left = newNode;
+		else if (((Comparable) newNode.value).compareTo(currNode.value) > 0) currNode.right = newNode;
 		else return false;
+		return true;
 		
 	}
 	
