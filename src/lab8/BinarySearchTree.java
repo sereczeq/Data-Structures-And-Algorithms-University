@@ -1,6 +1,5 @@
 package lab8;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -103,21 +102,11 @@ public class BinarySearchTree<T>
 		
 	}
 	
-	private Comparator<T> comparator = null;
 	private Node root;
 	
 	public BinarySearchTree()
 	{
 		
-		root = null;
-		
-	}
-	
-	
-	public BinarySearchTree(Comparator<T> comp)
-	{
-		
-		comparator = comp;
 		root = null;
 		
 	}
@@ -271,6 +260,7 @@ public class BinarySearchTree<T>
 	{
 		
 		String string = inOrder(root);
+		if (string.length() < 2) return string;
 		string = string.substring(0, string.length() - 2);
 		return string;
 		
@@ -294,6 +284,7 @@ public class BinarySearchTree<T>
 	{
 		
 		String string = preOrder(root);
+		if (string.length() < 2) return string;
 		string = string.substring(0, string.length() - 2);
 		return string;
 		
@@ -317,6 +308,7 @@ public class BinarySearchTree<T>
 	{
 		
 		String string = postOrder(root);
+		if (string.length() < 2) return string;
 		string = string.substring(0, string.length() - 2);
 		return string;
 		
@@ -406,12 +398,14 @@ public class BinarySearchTree<T>
 		// case 2 - has one child
 		else if (toDelete.left != null && toDelete.right == null)
 		{
-			if (toDelete.parent.left == toDelete) toDelete.parent.left = toDelete.left;
+			if (toDelete == root) root = toDelete.left;
+			else if (toDelete.parent.left == toDelete) toDelete.parent.left = toDelete.left;
 			else toDelete.parent.right = toDelete.left;
 		}
 		else if (toDelete.right != null && toDelete.left == null)
 		{
-			if (toDelete.parent.left == toDelete) toDelete.parent.left = toDelete.right;
+			if (toDelete == root) root = toDelete.right;
+			else if (toDelete.parent.left == toDelete) toDelete.parent.left = toDelete.right;
 			else toDelete.parent.right = toDelete.right;
 		}
 		// case 3 - has two children
