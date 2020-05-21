@@ -1,84 +1,31 @@
-package lab8;
+package tut7;
 
-import java.util.Iterator;
-import java.util.ListIterator;
+import java.util.Comparator;
 import java.util.NoSuchElementException;
-
-interface IWithName
-{
-	
-	String getName();
-	
-}
-
-interface IList<E> extends Iterable<E>
-{
-	
-	boolean add(E e); // add element to the list on proper position
-	
-	void add(int index, E element) throws NoSuchElementException; // not implemented
-	
-	void clear(); // delete all elements
-	
-	boolean contains(E element); // is list containing an element (equals())
-	
-	E get(int index) throws NoSuchElementException; // get element from position
-	
-	E set(int index, E element) throws NoSuchElementException; // not implemented
-	
-	int indexOf(E element); // where is element (equals())
-	
-	boolean isEmpty();
-	
-	Iterator<E> iterator();
-	
-	ListIterator<E> listIterator() throws UnsupportedOperationException; // for ListIterator
-	
-	E remove(int index) throws NoSuchElementException; // remove element from position index
-	
-	boolean remove(E e); // remove element
-	
-	int size();
-	
-}
 
 public class RedBlackBST<T>
 {
 	
-	// public static void main(String[] arts)
-	// {
-	//
-	// BinarySearchTree bst = new BinarySearchTree();
-	// System.out.println(bst.add(7));
-	// System.out.println(bst.add(7));
-	// bst.add(2);
-	// System.out.println(bst.add(7));
-	// bst.remove(1);
-	// System.out.println(bst.toStringInOrder());
-	// System.out.println(bst.toStringPostOrder());
-	// System.out.println(bst.toStringPreOrder());
-	//
-	// }
-	
-	private class Node
+	class Node
 	{
 		
 		T value;
-		Node left = null, right = null, parent = null;
-		boolean black = true;
+		Node left;
+		Node right;
+		Node parent;
+		String color;
 		
-		public Node(T v)
+		Node(T value)
 		{
 			
-			value = v;
+			this.value = value;
 			
 		}
 		
 		
-		public Node(T value, Node left, Node right, Node parent)
+		Node(T value, Node right, Node left, Node parent)
 		{
 			
-			super();
 			this.value = value;
 			this.left = left;
 			this.right = right;
@@ -86,310 +33,452 @@ public class RedBlackBST<T>
 			
 		}
 		
-		
-		private void setChildrenBlack()
-		{
-			
-			if (left != null) left.black = true;
-			if (right != null) right.black = true;
-			
-		}
-		
-		
-		@Override
-		public String toString()
-		{
-			
-			String string = "";
-			string += value.toString();
-			// string += "value = " + value;
-			// string += ", parent=" + (parent != null ? parent.value : "null");
-			// string += ", right=" + (right != null ? right.value : "null");
-			// string += ", left=" + (left != null ? left.value : "null");
-			return string;
-			
-		}
-		
 	}
 	
+	private final Comparator<T> comparator;
 	private Node root;
 	
-	public RedBlackBST()
+	RedBlackBST(Comparator<T> comparator)
 	{
 		
+		this.comparator = comparator;
 		root = null;
 		
 	}
 	
+	private int noNodesLeft = 0;
+	private int noNodesRight = 0;
+	private int noLeafsLeft = 0;
+	private int noLeafsRight = 0;
 	
-	public T getElement(T toFind)
+	// 1.a) find maximum
+	public T max()
 	{
 		
-		return getElement(root, toFind);
+		return find(max(root).value);
 		
 	}
 	
 	
-	@SuppressWarnings("unchecked")
-	private T getElement(Node start, T toFind)
+	private Node max(Node node)
 	{
 		
-		Comparable<T> toFindComparable = (Comparable<T>) toFind;
-		if (start == null) return null;
-		
-		if (toFindComparable.compareTo(toFind) == 0) return start.value;
-		// searched value is smaller - look in the left subtree
-		if (toFindComparable.compareTo(start.value) < 0) return getElement(start.left, toFind);
-		// searched value is larger - look in the right subtree
-		return getElement(start.right, toFind);
+		if (node.right != null) node = max(node.right);
+		return node;
 		
 	}
 	
 	
-	@SuppressWarnings("unchecked")
-	private Node findNode(Node start, T toFind)
+	private T find(T elem)
 	{
 		
-		Comparable<T> toFindComparable = (Comparable<T>) toFind;
-		if (start == null) return null;
-		
-		if (toFindComparable.compareTo(start.value) == 0) return start;
-		// searched value is smaller - look in the left subtree
-		if (toFindComparable.compareTo(start.value) < 0) return findNode(start.left, toFind);
-		// searched value is larger - look in the right subtree
-		return findNode(start.right, toFind);
+		Node node = search(elem);
+		return node == null ? null : node.value;
 		
 	}
 	
 	
-	private T getMinimum(Node startNode)
+	public Node search(T elem)
 	{
 		
-		if (root == null) throw new NoSuchElementException();
-		
-		return getMinimumNode(startNode).value;
-		
-	}
-	
-	
-	private Node getMinimumNode(Node startNode)
-	{
-		
-		Node currentNode = startNode;
-		for (; currentNode.left != null; currentNode = currentNode.left);
-		return currentNode;
-		
-	}
-	
-	
-	private T getMaximum(Node startNode)
-	{
-		
-		if (root == null) throw new NoSuchElementException();
-		
-		return getMaximumNode(startNode).value;
-		
-	}
-	
-	
-	private Node getMaximumNode(Node startNode)
-	{
-		
-		Node currentNode = startNode;
-		for (; currentNode.right != null; currentNode = currentNode.right);
-		return currentNode;
-		
-	}
-	
-	
-	public T successor(T elem)
-	{
-		
-		Node successor = findNode(root, elem);
-		
-		if (successor.right != null) return getMinimum(successor.right);
-		
-		Node currNode = successor.parent;
-		while (currNode != null && successor == currNode.right)
+		Node node = root;
+		int cmp = 0;
+		while (node != null && (cmp = comparator.compare(elem, node.value)) != 0)
 		{
-			successor = currNode;
-			currNode = currNode.parent;
+			node = cmp < 0 ? node.left : node.right;
 		}
-		
-		return currNode.value;
-		
-	}
-	
-	
-	public String toStringInOrder()
-	{
-		
-		return removeComma(inOrder(root));
+		return node;
 		
 	}
 	
 	
-	private String inOrder(Node node)
+	// 1.b)find minimum
+	public T min()
 	{
 		
-		String string = "";
-		if (node == null) return string;
-		string += inOrder(node.left);
-		string += node.toString() + ", ";
-		string += inOrder(node.right);
-		return string;
+		return find(min(root).value);
 		
 	}
 	
 	
-	public String toStringPreOrder()
+	private Node min(Node node)
 	{
 		
-		return removeComma(preOrder(root));
-		
-	}
-	
-	
-	private String preOrder(Node node)
-	{
-		
-		String string = "";
-		if (node == null) return string;
-		string += node.toString() + ", ";
-		string += preOrder(node.left);
-		string += preOrder(node.right);
-		return string;
-		
-	}
-	
-	
-	public String toStringPostOrder()
-	{
-		
-		return removeComma(postOrder(root));
-		
-	}
-	
-	
-	private String postOrder(Node node)
-	{
-		
-		String string = "";
-		if (node == null) return string;
-		string += postOrder(node.left);
-		string += postOrder(node.right);
-		string += node.toString() + ", ";
-		return string;
-		
-	}
-	
-	
-	private String removeComma(String string)
-	{
-		
-		if (string.length() < 2) return string;
-		return string.substring(0, string.length() - 2);
-		
-	}
-	
-	
-	public boolean add(T elem)
-	{
-		
-		return add(root, elem);
-		
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	private boolean add(Node startNode, T elem)
-	{
-		
-		Node currNode = null;
-		Node root = startNode;
-		Node newNode = new Node(elem);
-		
-		while (root != null)
+		while (node.left != null)
 		{
-			currNode = root;
-			if (((Comparable<T>) newNode.value).compareTo(root.value) < 0) root = root.left;
-			else if (((Comparable<T>) newNode.value).compareTo(root.value) > 0) root = root.right;
-			else return false;
+			node = node.left;
 		}
+		return node;
 		
-		newNode.parent = currNode;
-		if (currNode == null) this.root = newNode;
-		else if (((Comparable) newNode.value).compareTo(currNode.value) < 0) currNode.left = newNode;
-		else if (((Comparable) newNode.value).compareTo(currNode.value) > 0) currNode.right = newNode;
+	}
+	
+	
+	// 2.a) find successor
+	public T findSuccessor(T elem)
+	{
+		
+		// case 1
+		if (elem == max()) return null;
+		if (!exist(elem)) return null;
+		return findSuccessor(search(elem)).value;
+		
+	}
+	
+	
+	public boolean exist(T elem)
+	{
+		
+		if (search(elem) != null) return true;
 		else return false;
-		return true;
 		
 	}
 	
 	
-	public T remove(T value)
+	private Node findSuccessor(Node node)
 	{
 		
-		Node toDelete = findNode(root, value);
-		if (toDelete == null) return null;
-		T temp = toDelete.value;
-		if (size() == 1) clear();
+		Node successor = null;
+		// case 2:
+		if (node.right != null) return min(node.right);
+		// case 3:
+		successor = node.parent;
+		while (successor != null && node == successor.right)
+		{
+			node = successor;
+			successor = successor.parent;
+		}
+		return successor;
 		
-		// case 1 - no children
-		else if (toDelete.left == null && toDelete.right == null)
+	}
+	
+	
+	// 2.b) find predecessor
+	public T findPredecessor(T elem)
+	{
+		
+		// case 1
+		if (elem == min()) return null;
+		if (!exist(elem)) return null;
+		return findPredecessor(search(elem)).value;
+		
+	}
+	
+	
+	private Node findPredecessor(Node node)
+	{
+		
+		Node predecessor = null;
+		// case 2:
+		if (node.left != null) return max(node.left);
+		// case 3:
+		predecessor = node.parent;
+		while (predecessor != null && node == predecessor.left)
 		{
-			if (toDelete.parent.left == toDelete) toDelete.parent.left = null;
-			else toDelete.parent.right = null;
+			node = predecessor;
+			predecessor = predecessor.parent;
 		}
-		// case 2 - has one child
-		else if (toDelete.left != null && toDelete.right == null)
-		{
-			if (toDelete == root) root = toDelete.left;
-			else if (toDelete.parent.left == toDelete) toDelete.parent.left = toDelete.left;
-			else toDelete.parent.right = toDelete.left;
-		}
-		else if (toDelete.right != null && toDelete.left == null)
-		{
-			if (toDelete == root) root = toDelete.right;
-			else if (toDelete.parent.left == toDelete) toDelete.parent.left = toDelete.right;
-			else toDelete.parent.right = toDelete.right;
-		}
-		// case 3 - has two children
+		return predecessor;
+		
+	}
+	
+	
+	// 3 insert
+	public Node insert(T elem)
+	{
+		
+		root = insert(root, elem);
+		return root;
+		
+	}
+	
+	
+	private Node insert(Node node, T elem)
+	{
+		
+		if (node == null) return new Node(elem);
 		else
 		{
-			Node succesor = findNode(root, successor(toDelete.value));
-			remove(succesor.value);
-			toDelete.value = succesor.value;
+			int comp = comparator.compare(elem, node.value);
+			if (comp > 0)
+			{
+				node.right = insert(node.right, elem);
+				node.right.parent = node;
+			}
+			else if (comp < 0)
+			{
+				node.left = insert(node.left, elem);
+				node.left.parent = node;
+			}
 		}
-		return temp;
+		return node;
 		
 	}
 	
 	
-	public void clear()
+	// 4 remove
+	public void delete(T elem)
 	{
 		
-		root = null;
+		root = delete(elem, root);
 		
 	}
 	
 	
-	public int size()
+	protected Node delete(T elem, Node node)
 	{
 		
-		return size(root);
+		if (node == null) throw new NoSuchElementException();
+		else
+		{
+			int comp = comparator.compare(elem, node.value);
+			if (comp < 0) node.left = delete(elem, node.left);
+			else if (comp > 0) node.right = delete(elem, node.right);
+			else if (node.left != null && node.right != null) node.right = detachMin(node, node.right);
+			else node = (node.left != null) ? node.left : node.right;
+		}
+		return node;
 		
 	}
 	
 	
-	private int size(Node start)
+	private Node detachMin(Node del, Node node)
 	{
 		
-		if (start == null) return 0;
-		int x = 1;
-		x += size(start.left);
-		x += size(start.right);
-		return x;
+		if (node.left != null) node.left = detachMin(del, node.left);
+		else
+		{
+			del.value = node.value;
+			node = node.right;
+		}
+		return node;
+		
+	}
+	
+	
+	public void inOrderWalk()
+	{
+		
+		inOrderWalk(root);
+		
+	}
+	
+	
+	private void inOrderWalk(Node node)
+	{
+		
+		if (node != null)
+		{
+			inOrderWalk(node.left);
+			System.out.print(node.value + " ");
+			inOrderWalk(node.right);
+		}
+		
+	}
+	
+	
+	public void postOrderWalk()
+	{
+		
+		postOrderWalk(root);
+		
+	}
+	
+	
+	private void postOrderWalk(Node node)
+	{
+		
+		if (node != null)
+		{
+			postOrderWalk(node.left);
+			postOrderWalk(node.right);
+			System.out.print(node.value + " ");
+		}
+		
+	}
+	
+	
+	public void preOrderWalk()
+	{
+		
+		preOrderWalk(root);
+		
+	}
+	
+	
+	private void preOrderWalk(Node node)
+	{
+		
+		if (node != null)
+		{
+			System.out.print(node.value + " ");
+			preOrderWalk(node.left);
+			preOrderWalk(node.right);
+		}
+		
+	}
+	
+	
+	public int height1(Node node)
+	{
+		
+		return height(node);
+		
+	}
+	
+	
+	private int height(Node node)
+	{
+		
+		if (node != null)
+		{
+			int rightHeight = height(node.right);
+			int leftHeight = height(node.left);
+			if (rightHeight > leftHeight) return rightHeight + 1;
+			else return leftHeight + 1;
+		}
+		else return 0;
+		
+	}
+	
+	
+	private int noLeafsLeft(Node node)
+	{
+		
+		if (node != null)
+		{
+			if (node.left == null && node.right == null)
+			{
+				noLeafsLeft++;
+			}
+			noLeafsLeft(node.left);
+			noLeafsLeft(node.right);
+		}
+		return noLeafsLeft;
+		
+	}
+	
+	
+	private int noLeafsRight(Node node)
+	{
+		
+		if (node != null)
+		{
+			if (node.left == null && node.right == null)
+			{
+				noLeafsRight++;
+			}
+			noLeafsRight(node.left);
+			noLeafsRight(node.right);
+		}
+		return noLeafsRight;
+		
+	}
+	
+	
+	private int noNodesLeft(Node node)
+	{
+		
+		if (node != null)
+		{
+			noNodesLeft(node.left);
+			noNodesLeft(node.right);
+			noNodesLeft++;
+		}
+		return noNodesLeft;
+		
+	}
+	
+	
+	private int noNodesRight(Node node)
+	{
+		
+		if (node != null)
+		{
+			noNodesRight(node.right);
+			noNodesRight(node.left);
+			noNodesRight++;
+		}
+		return noNodesRight;
+		
+	}
+	
+	
+	public void characteristics()
+	{
+		
+		System.out.println("The number of nodes in the left subtree: " + noNodesLeft(root.left));
+		System.out.println("The number of nodes in the right subtree: " + noNodesRight(root.right));
+		System.out.println("The number of the leafs in the left subtree: " + noLeafsLeft(root.left));
+		System.out.println("The number of the leafs in the right subtree: " + noLeafsRight(root.right));
+		System.out.println("The height of the tree is: " + (height(root)));
+		
+	}
+	
+	
+	public Node insertRB(T elem)
+	{
+		
+		root = insertRB(root, elem);
+		return root;
+		
+	}
+	
+	
+	private Node insertRB(Node node, T elem)
+	{
+		
+		Node newNode = insert(node, elem);
+		Node root = node;
+		newNode.color = "red";
+		while (root != null && root.parent.color.equalsIgnoreCase("red"))
+		{
+			if (root.parent == root.parent.parent.left)
+			{
+				Node anNode = root.parent.parent.right;
+				if (anNode.color.equalsIgnoreCase("red"))
+				{
+					root.parent.color = "black";
+					anNode.color = "Black";
+					root.parent.parent.color = "red";
+					root = root.parent.parent;
+				}
+				else
+				{
+					if (root == root.parent.right)
+					{
+						root = root.parent;
+						// leftRotate(node, root.parent.parent);
+					}
+					root.parent.color = "Black";
+					root.parent.parent.color = "RED";
+					// rightRotate(node, root.parent.parent);
+				}
+			}
+			else if (root.parent == root.parent.parent.right)
+			{
+				Node anNode = root.parent.parent.left;
+				if (anNode.color.equalsIgnoreCase("red"))
+				{
+					root.parent.color = "black";
+					anNode.color = "Black";
+					root.parent.parent.color = "red";
+					root = root.parent.parent;
+				}
+				else
+				{
+					if (root == root.parent.left)
+					{
+						root = root.parent;
+						// rightRotate(node, root.parent.parent);
+					}
+					root.parent.color = "Black";
+					root.parent.parent.color = "RED";
+					// leftRotate(node, root.parent.parent);
+				}
+			}
+		}
+		node.color = "BLACK";
+		return newNode;
 		
 	}
 	
