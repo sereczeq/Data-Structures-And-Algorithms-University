@@ -47,26 +47,26 @@ interface IList<E> extends Iterable<E>
 public class RBBST<T>
 {
 	
-	public static void main(String[] arts)
-	{
-		
-		RBBST bst = new RBBST();
-		bst.insert(10);
-		bst.insert(4);
-		bst.insert(20);
-		bst.insert(30);
-		bst.insert(40);
-		bst.insert(15);
-		bst.insert(13);
-		bst.insert(6);
-		bst.insert(8);
-		bst.insert(12);
-		bst.printNaturalForm();
-		System.out.println(bst.toStringInOrder());
-		System.out.println(bst.toStringPostOrder());
-		System.out.println(bst.toStringPreOrder());
-		
-	}
+	// public static void main(String[] arts)
+	// {
+	//
+	// RBBST bst = new RBBST();
+	// bst.insert(10);
+	// bst.insert(4);
+	// bst.insert(20);
+	// bst.insert(30);
+	// bst.insert(40);
+	// bst.insert(15);
+	// bst.insert(13);
+	// bst.insert(6);
+	// bst.insert(8);
+	// bst.insert(12);
+	// bst.printNaturalForm();
+	// System.out.println(bst.toStringInOrder());
+	// System.out.println(bst.toStringPostOrder());
+	// System.out.println(bst.toStringPreOrder());
+	//
+	// }
 	
 	private class Node
 	{
