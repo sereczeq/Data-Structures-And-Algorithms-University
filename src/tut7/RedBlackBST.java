@@ -65,6 +65,7 @@ public class RedBlackBST<T>
 		
 		T value;
 		Node left = null, right = null, parent = null;
+		boolean black = true;
 		
 		public Node(T v)
 		{
@@ -82,6 +83,15 @@ public class RedBlackBST<T>
 			this.left = left;
 			this.right = right;
 			this.parent = parent;
+			
+		}
+		
+		
+		private void setChildrenBlack()
+		{
+			
+			if (left != null) left.black = true;
+			if (right != null) right.black = true;
 			
 		}
 		
@@ -104,7 +114,7 @@ public class RedBlackBST<T>
 	
 	private Node root;
 	
-	public BinarySearchTree()
+	public RedBlackBST()
 	{
 		
 		root = null;
