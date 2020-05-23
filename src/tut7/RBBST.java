@@ -292,7 +292,7 @@ public class RBBST<T>
 	}
 	
 	
-	public boolean add(T elem)
+	private boolean add(T elem)
 	{
 		
 		return add(root, elem);
