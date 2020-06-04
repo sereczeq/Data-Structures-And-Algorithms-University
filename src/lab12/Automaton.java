@@ -10,53 +10,74 @@ public class Automaton implements IStringMatcher
 	{
 		
 		LinkedList<Integer> shifts = new LinkedList<>();
+		char[] textArr = text.toCharArray();
+		char[] patternArr = pattern.toCharArray();
 		
-		char[] P = pattern.toCharArray();
-		char[] T = text.toCharArray();
-		int n = T.length;
-		int m = P.length;
-		int q = 0;
-		for (int i = 1; i < n; i++)
+		int[][] transitionFunction = computeTransitionFunction(patternArr);
+		
+		for (int i = 0, state = 0; i < textArr.length; i++)
 		{
-			q = getNextState(P, P.length, q, q);
-			if (q == m)
+			state = transitionFunction[state][textArr[i]];
+			if (state == patternArr.length)
 			{
-				int s = i - m;
-				shifts.add(s);
+				shifts.add(i + 1 - patternArr.length); // random 1, but works
+				i -= state;
+				i += 1; // random 1 again, but works
+				state = 0;
 			}
 		}
-		return null;
+		
+		return shifts;
 		
 	}
 	
 	
-	private int getNextState(char[] pat, int M, int state, int x)
+	// assume codes from 0 to 225
+	public int[][] computeTransitionFunction(char[] patternArr)
 	{
 		
-		// If the character c is same as next
-		// character in pattern,then simply
-		// increment state
-		if (state < M && x == pat[state]) return state + 1;
+		int[][] transitionFunction = new int[226][226];
 		
-		// ns stores the result which is next state
-		int ns, i;
-		
-		// ns finally contains the longest prefix
-		// which is also suffix in "pat[0..state-1]c"
-		
-		// Start from the largest possible value
-		// and stop when you find a prefix which
-		// is also suffix
-		for (ns = state; ns > 0; ns--)
+		for (int q = 0; q < patternArr.length; q++)
 		{
-			if (pat[ns - 1] == x)
-			{
-				for (i = 0; i < ns - 1; i++) if (pat[i] != pat[state - ns + 1 + i]) break;
-				if (i == ns - 1) return ns;
+			for (int a = 65; a < 122; a++)
+			{ // assumed input alphabet
+				if (a == 91)
+				{
+					a = 97;
+				}
+				int k = Math.min(patternArr.length + 1, q + 2);
+				
+				String pattern = String.copyValueOf(patternArr);
+				String Pk, Pqa;
+				// Pk = the substring of pattern ending at k
+				do
+				{
+					
+					k--;
+					Pk = pattern.substring(0, k);
+					Pqa = pattern.substring(0, q) + (char) a;
+					/*
+					 * It then decreases k until Pk ⊐ Pqa, which must eventually occur, since P0 D "
+					 * is a suffix of every string
+					 */
+				}
+				
+				while (!isSuffix(Pk, Pqa));
+				
+				transitionFunction[q][a] = k;
 			}
 		}
 		
-		return 0;
+		return transitionFunction;
+		
+	}
+	
+	
+	private boolean isSuffix(String smallString, String fullString)
+	{
+		
+		return fullString.endsWith(smallString);
 		
 	}
 	
