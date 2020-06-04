@@ -13,10 +13,10 @@ public class KMP implements IStringMatcher
 		char[] P = pattern.toCharArray();
 		char[] T = text.toCharArray();
 		int n = text.length();
-		int m = pattern.length();
+		int m = pattern.length() - 1;
 		int[] pi = computePrefixFunction(P);
 		int q = 0;
-		for (int i = 0; i < n; i++)
+		for (int i = 1; i < n; i++)
 		{
 			while (q > 0 && P[q + 1] != T[i])
 			{
