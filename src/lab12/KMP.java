@@ -12,23 +12,16 @@ public class KMP implements IStringMatcher
 		LinkedList<Integer> shifts = new LinkedList<Integer>();
 		char[] P = pattern.toCharArray();
 		char[] T = text.toCharArray();
-		int n = text.length();
-		int m = pattern.length() - 1;
+		int patternLength = pattern.length() - 1; // -1 because it helps
 		int[] pi = computePrefixFunction(P);
 		int q = 0;
-		for (int i = 1; i < n; i++)
+		for (int i = 1; i < T.length; i++)
 		{
-			while (q > 0 && P[q + 1] != T[i])
+			while (q > 0 && P[q + 1] != T[i]) q = pi[q];
+			if (P[q + 1] == T[i]) q++;
+			if (q == patternLength)
 			{
-				q = pi[q];
-			}
-			if (P[q + 1] == T[i])
-			{
-				q++;
-			}
-			if (q == m)
-			{
-				shifts.add(i - m);
+				shifts.add(i - patternLength);
 				q = pi[q];
 			}
 		}
@@ -40,11 +33,9 @@ public class KMP implements IStringMatcher
 	private int[] computePrefixFunction(char[] P)
 	{
 		
-		int m = P.length;
-		int[] pi = new int[m];
-		pi[1] = 0;
+		int[] pi = new int[P.length];
 		int k = 0;
-		for (int q = 2; q < m; q++)
+		for (int q = 2; q < P.length; q++) // idk why it starts from 2
 		{
 			while (k > 0 && P[k + 1] != P[q])
 			{
