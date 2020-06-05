@@ -15,7 +15,7 @@ public class KMP implements IStringMatcher
 		int patternLength = pattern.length() - 1; // -1 because it helps
 		int[] pi = computePrefixFunction(P);
 		int q = 0;
-		for (int i = 1; i < T.length; i++)
+		for (int i = 0; i < T.length; i++)
 		{
 			while (q > 0 && P[q + 1] != T[i]) q = pi[q];
 			if (P[q + 1] == T[i]) q++;
@@ -35,13 +35,13 @@ public class KMP implements IStringMatcher
 		
 		int[] pi = new int[P.length];
 		int k = 0;
-		for (int q = 2; q < P.length; q++) // idk why it starts from 2
+		for (int q = 1; q < P.length; q++) // idk why it starts from 2
 		{
-			while (k > 0 && P[k + 1] != P[q])
+			while (k > 0 && P[k] != P[q])
 			{
-				k = pi[k];
+				k = pi[k - 1];
 			}
-			if (P[k + 1] == P[q])
+			if (P[k] == P[q])
 			{
 				k = k + 1;
 			}
