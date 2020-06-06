@@ -38,7 +38,8 @@ public class Lab12Main
 				int textLines = Integer.parseInt(word[2]);
 				String pattern = reader.concatLines(patternLines, scan);
 				String text = reader.concatLines(textLines, scan);
-				LinkedList<Integer> result = automaton.validShifts(pattern, text);
+				LinkedList<Integer> result = null;
+				result = automaton.validShifts(pattern, text);
 				System.out.println(result);
 				continue;
 			}

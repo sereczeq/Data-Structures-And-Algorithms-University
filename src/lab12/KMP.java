@@ -17,12 +17,16 @@ public class KMP implements IStringMatcher
 		int q = 0;
 		for (int i = 0; i < T.length; i++)
 		{
-			while (q > 0 && P[q + 1] != T[i]) q = pi[q];
-			if (P[q + 1] == T[i]) q++;
-			if (q == patternLength)
+			while (q > 0 && P[q] != T[i]) q = pi[q - 1];
+			if (P[q] == T[i])
 			{
-				shifts.add(i - patternLength);
-				q = pi[q];
+				q++;
+				
+				if (q == patternLength + 1)
+				{
+					shifts.add(i - patternLength);
+					q = pi[q - 1];
+				}
 			}
 		}
 		return shifts;
@@ -35,8 +39,9 @@ public class KMP implements IStringMatcher
 		
 		int[] pi = new int[P.length];
 		int k = 0;
-		for (int q = 1; q < P.length; q++) // idk why it starts from 2
+		for (int q = 1; q < P.length - 1; q++) // idk why it starts from 2
 		{
+			k = pi[q - 1]; // added this
 			while (k > 0 && P[k] != P[q])
 			{
 				k = pi[k - 1];

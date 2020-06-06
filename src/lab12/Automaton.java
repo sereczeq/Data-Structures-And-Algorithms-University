@@ -12,9 +12,9 @@ public class Automaton implements IStringMatcher
 		LinkedList<Integer> shifts = new LinkedList<>();
 		char[] textArr = text.toCharArray();
 		char[] patternArr = pattern.toCharArray();
-		
-		int[][] transitionFunction = computeTransitionFunction(patternArr);
-		
+		int[][] transitionFunction = null;
+		transitionFunction = computeTransitionFunction(patternArr);
+		if (transitionFunction == null) return shifts;
 		for (int i = 0, state = 0; i < textArr.length; i++)
 		{
 			state = transitionFunction[state][textArr[i]];
@@ -36,8 +36,8 @@ public class Automaton implements IStringMatcher
 	public int[][] computeTransitionFunction(char[] patternArr)
 	{
 		
+		if (patternArr.length <= 0) return null;
 		int[][] transitionFunction = new int[226][226];
-		
 		for (int q = 0; q < patternArr.length; q++)
 		{
 			for (int a = 65; a < 122; a++)
@@ -46,14 +46,13 @@ public class Automaton implements IStringMatcher
 				{
 					a = 97;
 				}
-				int k = Math.min(patternArr.length + 1, q + 2);
+				int k = Math.min(patternArr.length, q + 1);
 				
 				String pattern = String.copyValueOf(patternArr);
 				String Pk, Pqa;
 				// Pk = the substring of pattern ending at k
 				do
 				{
-					
 					k--;
 					Pk = pattern.substring(0, k);
 					Pqa = pattern.substring(0, q) + (char) a;
@@ -62,7 +61,6 @@ public class Automaton implements IStringMatcher
 					 * is a suffix of every string
 					 */
 				}
-				
 				while (!isSuffix(Pk, Pqa));
 				
 				transitionFunction[q][a] = k;
