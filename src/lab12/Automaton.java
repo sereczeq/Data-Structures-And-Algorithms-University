@@ -22,8 +22,8 @@ public class Automaton implements IStringMatcher
 			{
 				shifts.add(i + 1 - patternArr.length); // random 1, but works
 				i -= state;
-				i += 1; // random 1 again, but works
-				state = 0;
+				// i += 1; // random 1 again, but works
+				// state = 0;
 			}
 		}
 		
@@ -37,7 +37,7 @@ public class Automaton implements IStringMatcher
 	{
 		
 		if (patternArr.length <= 0) return null;
-		int[][] transitionFunction = new int[226][226];
+		int[][] transitionFunction = new int[patternArr.length + 1][226];
 		for (int q = 0; q < patternArr.length; q++)
 		{
 			for (int a = 65; a < 122; a++)
@@ -46,7 +46,7 @@ public class Automaton implements IStringMatcher
 				{
 					a = 97;
 				}
-				int k = Math.min(patternArr.length, q + 1);
+				int k = Math.min(patternArr.length + 1, q + 2);
 				
 				String pattern = String.copyValueOf(patternArr);
 				String Pk, Pqa;
